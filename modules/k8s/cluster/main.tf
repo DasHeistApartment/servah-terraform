@@ -16,6 +16,7 @@ resource "proxmox_vm_qemu" "k8s_controller" {
   tablet      = false
   iso         = "local:iso/k8s-controller-template.iso" # stored in OneDrive, in case Proxmox server experiences data loss
   bios        = "seabios"
+  qemu_os     = "other"
 
   cores  = 2
   memory = 2048
@@ -42,6 +43,7 @@ resource "proxmox_vm_qemu" "k8s_node_0" {
   tablet      = false
   iso         = "local:iso/k8s-node-template.iso" # stored in OneDrive, in case Proxmox server experiences data loss
   bios        = "seabios"
+  qemu_os     = "other"
 
   cores  = 2
   memory = 4096
