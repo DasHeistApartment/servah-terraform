@@ -1,4 +1,14 @@
 terraform {
+  cloud {
+    organization = "the-heist-apartment"
+
+    workspaces {
+      name = "servah-host-workspace"
+    }
+  }
+}
+
+terraform {
   required_providers {
     proxmox = {
       source  = "Telmate/proxmox"
