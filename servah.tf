@@ -14,6 +14,10 @@ terraform {
       source  = "Telmate/proxmox"
       version = "2.9.14"
     }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = ">= 2.0.0"
+    }
   }
 }
 
@@ -33,6 +37,14 @@ provider "proxmox" {
   pm_api_token_secret = var.proxmox_token_secret
 }
 
+provider "kubernetes" {
+
+}
+
 module "proxmox_kubernetes_cluster" {
   source = "./modules/k8s/cluster"
+}
+
+module "kubernetes_terraform" {
+  source = "./modules/k8s/terraform"
 }
