@@ -70,7 +70,10 @@ jobs:
             const botComment = comments.find(comment => {
               return comment.user.type === 'Bot' && comment.body.includes('Terraform Cloud Plan Output')
             });
-            const output = `${{ steps.plan-prettify.outputs.markdown }}`;
+            const output = `#### Terraform Cloud Plan Output
+            ${{ steps.plan-prettify.outputs.markdown }}
+            [Terraform Cloud Plan](${{ steps.plan-run.outputs.run_link }})
+            `;
             // 3. Delete previous comment so PR timeline makes sense
             if (botComment) {
               github.rest.issues.deleteComment({
