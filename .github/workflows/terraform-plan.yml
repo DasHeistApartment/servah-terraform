@@ -43,6 +43,18 @@ jobs:
         with:
           plan: ${{ fromJSON(steps.plan-run.outputs.payload).data.relationships.plan.data.id }}
 
+      - name: Get & Prettify Plan Output
+        id: plan-prettify
+        run: |
+          wget https://github.com/reproio/terraform-j2md/releases/download/v0.0.4/terraform-j2md_Linux_x86_64.tar.gz
+          tar -xf terraform-j2md_Linux_x86_64.tar.gz
+          chmod +x terraform-j2md
+          curl --header "Authorization: Bearer $TF_API_TOKEN" --header "Content-Type: application/vnd.api+json" -Lo plan.json https://app.terraform.io/api/v2/plans/${{ steps.plan-output.outputs.plan_id }}/json-output
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "markdown<<$EOF" >> "$GITHUB_OUTPUT"
+          ./terraform-j2md < plan.json >> "$GITHUB_OUTPUT"
+          echo "$EOF" >> "$GITHUB_OUTPUT"
+
       - name: Update PR
         uses: actions/github-script@v6
         id: plan-comment
@@ -58,12 +70,7 @@ jobs:
             const botComment = comments.find(comment => {
               return comment.user.type === 'Bot' && comment.body.includes('Terraform Cloud Plan Output')
             });
-            const output = `#### Terraform Cloud Plan Output
-               \`\`\`hcl
-               Plan: ${{ steps.plan-output.outputs.add }} to add, ${{ steps.plan-output.outputs.change }} to change, ${{ steps.plan-output.outputs.destroy }} to destroy.
-               \`\`\`
-               [Terraform Cloud Plan](${{ steps.plan-run.outputs.run_link }})
-               `;
+            const output = `${{ steps.plan-prettify.outputs.markdown }}`;
             // 3. Delete previous comment so PR timeline makes sense
             if (botComment) {
               github.rest.issues.deleteComment({
