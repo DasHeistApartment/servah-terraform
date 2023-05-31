@@ -1,6 +1,6 @@
 terraform {
   cloud {
-    organization = "the-heist-apartment"
+    organization = "das-heist-apartment"
 
     workspaces {
       name = "servah-host-workspace"
