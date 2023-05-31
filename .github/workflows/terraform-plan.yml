@@ -72,6 +72,7 @@ jobs:
             });
             const output = `#### Terraform Cloud Plan Output
             ${{ steps.plan-prettify.outputs.markdown }}
+            
             [Terraform Cloud Plan](${{ steps.plan-run.outputs.run_link }})
             `;
             // 3. Delete previous comment so PR timeline makes sense
