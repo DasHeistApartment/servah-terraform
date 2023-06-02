@@ -55,7 +55,7 @@ resource "kubernetes_cluster_role_binding" "tfc_agent" {
 resource "kubernetes_deployment" "tfc_agent" {
   wait_for_rollout = false
 
-  depends_on = [kubernetes_service_account.tfc_agent, kubernetes_secret.tfc_agent_token]
+  depends_on = [kubernetes_service_account.tfc_agent, kubernetes_secret.tfc_agent_token, kubernetes_namespace.terraform]
 
   metadata {
     namespace = kubernetes_namespace.terraform.metadata.0.name
