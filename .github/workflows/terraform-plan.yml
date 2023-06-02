@@ -50,6 +50,7 @@ jobs:
           tar -xf terraform-j2md_Linux_x86_64.tar.gz
           chmod +x terraform-j2md
           curl --header "Authorization: Bearer $TF_API_TOKEN" --header "Content-Type: application/vnd.api+json" -Lo plan.json https://app.terraform.io/api/v2/plans/${{ steps.plan-output.outputs.plan_id }}/json-output-redacted
+          sed -i -e 's/{"plan_format_version"/{"format_version"/' plan.json
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "markdown<<$EOF" >> "$GITHUB_OUTPUT"
           ./terraform-j2md < plan.json | sed -e 's/`/\\`/g' >> "$GITHUB_OUTPUT"
