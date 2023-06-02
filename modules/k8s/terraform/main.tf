@@ -29,7 +29,8 @@ resource "kubernetes_service_account" "tfc_agent" {
   depends_on = [kubernetes_namespace.terraform]
 
   metadata {
-    name = "tfc-agent"
+    namespace = kubernetes_namespace.terraform.metadata.0.name
+    name      = "tfc-agent"
   }
 }
 
