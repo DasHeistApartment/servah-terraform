@@ -14,6 +14,7 @@ resource "kubernetes_namespace" "terraform" {
 }
 
 resource "kubernetes_secret" "tfc_agent_token" {
+  depends_on = [kubernetes_namespace.terraform]
   metadata {
     namespace = kubernetes_namespace.terraform.metadata.0.name
     name      = "tfc-agent-token"
@@ -25,12 +26,16 @@ resource "kubernetes_secret" "tfc_agent_token" {
 }
 
 resource "kubernetes_service_account" "tfc_agent" {
+  depends_on = [kubernetes_namespace.terraform]
+
   metadata {
     name = "tfc-agent"
   }
 }
 
 resource "kubernetes_cluster_role_binding" "tfc_agent" {
+  depends_on = [kubernetes_service_account.tfc_agent]
+
   metadata {
     name = "tfc-agent-role-binding"
   }
@@ -48,6 +53,8 @@ resource "kubernetes_cluster_role_binding" "tfc_agent" {
 
 resource "kubernetes_deployment" "tfc_agent" {
   wait_for_rollout = false
+
+  depends_on = [kubernetes_service_account.tfc_agent, kubernetes_secret.tfc_agent_token]
 
   metadata {
     namespace = kubernetes_namespace.terraform.metadata.0.name
@@ -69,6 +76,7 @@ resource "kubernetes_deployment" "tfc_agent" {
 
     template {
       metadata {
+        namespace = kubernetes_namespace.terraform.metadata.0.name
         labels = {
           deployment = "tfc-agent"
         }
