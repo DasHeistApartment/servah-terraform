@@ -80,7 +80,6 @@ resource "kubernetes_deployment" "tfc_agent" {
         namespace = kubernetes_namespace.terraform.metadata.0.name
         labels = {
           deployment = "tfc-agent"
-          testlabel  = "success"
         }
       }
 
