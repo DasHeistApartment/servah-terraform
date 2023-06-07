@@ -22,9 +22,9 @@ terraform {
 # Will use the same kubernetes config as the kubernetes provider
 #}
 
-#module "networking" {
-#  source = "./networking"
-#}
+module "networking" {
+  source = "./networking"
+}
 
 # note: check out https://github.com/JamesLaverack/holepunch for automatic port forwardings
 
