@@ -33,16 +33,19 @@ resource "helm_release" "metal_lb_setup" {
   namespace = helm_release.metal_lb.metadata.0.namespace
 
   name  = "metallb-setup"
-  chart = "./charts/metallb-setup"
+  chart = "${path.module}/charts/metallb-setup"
 
   depends_on = [helm_release.metal_lb]
 }
 
 resource "helm_release" "nginx_controller" {
-  name       = "nginx-controller"
-  repository = "oci://ghcr.io/nginxinc/charts"
-  chart      = "nginx-ingress"
-  version    = "0.17.1"
+  namespace = "ingress-nginx"
+
+  name             = "nginx-controller"
+  repository       = "oci://ghcr.io/nginxinc/charts"
+  chart            = "nginx-ingress"
+  version          = "0.17.1"
+  create_namespace = true
 
   depends_on = [helm_release.metal_lb_setup]
 }
@@ -64,11 +67,7 @@ resource "helm_release" "acme_setup" {
   namespace = helm_release.cert_manager.metadata.0.namespace
 
   name  = "acme-setup"
-  chart = "./charts/acme-setup"
+  chart = "${path.module}/charts/acme-setup"
 
   depends_on = [helm_release.cert_manager]
-}
-
-output "tls_secret_name" {
-  value = yamldecode(helm_release.acme_setup.metadata.0.values).secret.staging
 }
