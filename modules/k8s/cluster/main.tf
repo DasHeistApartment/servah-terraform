@@ -59,4 +59,8 @@ resource "proxmox_vm_qemu" "k8s_node_0" {
     model  = "virtio"
     bridge = "vmbr0"
   }
+
+  provisioner "local-exec" {
+    command = "until [ $(curl -k -f https://k8s-controller:6443/livez -o /dev/null -w '%%{http_code}\n' -s) -eq 200 ]; do sleep 2; done"
+  }
 }
