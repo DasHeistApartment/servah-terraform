@@ -14,10 +14,6 @@ terraform {
       source  = "Telmate/proxmox"
       version = "2.9.14"
     }
-    kubernetes = {
-      source  = "hashicorp/kubernetes"
-      version = ">= 2.0.0"
-    }
   }
 }
 
@@ -27,19 +23,14 @@ provider "proxmox" {
   pm_api_token_secret = var.proxmox_token_secret
 }
 
-provider "kubernetes" {
-  # Will run in-cluster using a service account if the agent is already set up and will therefore need no credentials.
-  # If the agent is not yet running, make sure a temporary agent has access to the cluster by defining the KUBE_CONFIG_PATH variable.
-  # A command to do this on windows can be found below (make sure docker is installed and running).
-  # docker run --name tfc_agent_temp --env TFC_AGENT_TOKEN=%TOKEN% --env "KUBE_CONFIG_PATH=/home/tfc-agent/.kube/config" --mount type=bind,source="%userprofile%\.kube",target=/home/tfc-agent/.kube,readonly hashicorp/tfc-agent:latest
-}
-
 module "proxmox_kubernetes_cluster" {
   source = "./modules/k8s/cluster"
 }
 
-module "kubernetes_terraform" {
-  source = "./modules/k8s/terraform"
+module "kubernetes_in_cluster" {
+  source = "./modules/k8s/in_cluster"
 
   tfc_agent_token = var.tfc_agent_token
+
+  depends_on = [module.proxmox_kubernetes_cluster]
 }
