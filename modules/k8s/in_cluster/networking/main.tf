@@ -34,6 +34,8 @@ resource "helm_release" "metal_lb_setup" {
 
   name  = "metallb-setup"
   chart = "./charts/metallb-setup"
+
+  depends_on = [helm_release.metal_lb]
 }
 
 resource "helm_release" "nginx_controller" {
