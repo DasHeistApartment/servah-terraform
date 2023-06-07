@@ -11,7 +11,7 @@ spec:
     server: {{ .Values.server }}
     privateKeySecretRef:
       # Secret resource that will be used to store the account's private key.
-      name: {{ .Values.secret.staging }}
+      name: {{ .Values.secret.name }}
     # Add a single challenge solver, HTTP01 using nginx
     solvers:
     - http01:
