@@ -1,4 +1,5 @@
 issuer:
   email: flommeyer@gmail.com
 secret:
-  staging: letsencrypt-staging
+  name: letsencrypt-staging
+server: https://acme-staging-v02.api.letsencrypt.org/directory
