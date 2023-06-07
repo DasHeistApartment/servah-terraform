@@ -45,13 +45,13 @@ resource "proxmox_vm_qemu" "k8s_node_0" {
   bios        = "seabios"
   qemu_os     = "other"
 
-  cores  = 2
-  memory = 4096
+  cores  = 4
+  memory = 8192
 
   disk {
     type    = "scsi"
     storage = "Kingston500GBNVMe1"
-    size    = "8G"
+    size    = "32G"
     ssd     = 1
   }
 

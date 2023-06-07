@@ -63,6 +63,8 @@ resource "helm_release" "acme_setup" {
 
   name  = "acme-setup"
   chart = "./charts/acme-setup"
+
+  depends_on = [helm_release.cert_manager]
 }
 
 output "tls_secret_name" {
