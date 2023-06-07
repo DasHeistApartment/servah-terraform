@@ -1,0 +1,4 @@
+issuer:
+  email: flommeyer@gmail.com
+secret:
+  staging: letsencrypt-staging
