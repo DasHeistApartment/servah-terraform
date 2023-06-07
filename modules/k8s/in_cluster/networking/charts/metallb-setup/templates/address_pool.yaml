@@ -6,3 +6,4 @@ metadata:
 spec:
   addresses:
   - {{ .Values.pool.default.address_range }}
+  avoidBuggyIPs: true
