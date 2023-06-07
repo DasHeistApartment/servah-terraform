@@ -33,17 +33,17 @@ resource "helm_release" "actions_runner_controller" {
 }
 
 # The webhook URL for this ingress would be https://home.crazypokemondev.de/actions-runner-controller-github-webhook-server
-resource "kubernetes_ingress" "github_webhook_server" {
+resource "kubernetes_ingress_v1" "github_webhook_server" {
   metadata {
     namespace = helm_release.actions_runner_controller.metadata.0.namespace
     name      = "actions-runner-controller-github-webhook-server"
     annotations = {
-      "kubernetes.io/ingress.class"                  = "nginx"
       "nginx.ingress.kubernetes.io/backend-protocol" = "HTTP"
     }
   }
 
   spec {
+    ingress_class_name = "nginx"
     tls {
       hosts       = ["home.crazypokemondev.de"]
       secret_name = "letsencrypt-staging"
@@ -52,10 +52,15 @@ resource "kubernetes_ingress" "github_webhook_server" {
     rule {
       http {
         path {
-          path = "/actions-runner-controller-github-webhook-server/*"
+          path = "/actions-runner-controller-github-webhook-server"
+          path_type = "Prefix"
           backend {
-            service_name = "actions-runner-controller-github-webhook-server"
-            service_port = 80
+            service {
+              name = "actions-runner-controller-github-webhook-server"
+              port {
+                number = 80
+              }
+            }
           }
         }
       }
