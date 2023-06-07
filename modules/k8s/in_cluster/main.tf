@@ -33,3 +33,9 @@ module "kubernetes_terraform" {
 
   tfc_agent_token = var.tfc_agent_token
 }
+
+module "github_actions" {
+  source = "./github_actions"
+
+  github_pat_arc = var.github_pat_arc
+}
