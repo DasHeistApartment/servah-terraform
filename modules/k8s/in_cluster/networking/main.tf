@@ -19,8 +19,6 @@ resource "helm_release" "nginx_controller" {
   chart            = "nginx-ingress"
   version          = "0.17.1"
   create_namespace = true
-
-  depends_on = [helm_release.metal_lb_setup]
 }
 
 resource "helm_release" "cert_manager" {
