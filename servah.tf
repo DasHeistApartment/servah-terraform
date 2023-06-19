@@ -30,8 +30,7 @@ module "proxmox_kubernetes_cluster" {
 module "kubernetes_in_cluster" {
   source = "./modules/k8s/in_cluster"
 
-  tfc_agent_token = var.tfc_agent_token
-  github_pat_arc  = var.github_pat_arc
+  github_pat_arc = var.github_pat_arc
 
   depends_on = [module.proxmox_kubernetes_cluster]
 }

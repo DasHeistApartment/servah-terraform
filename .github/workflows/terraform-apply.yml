@@ -13,33 +13,51 @@ env:
   CONFIG_DIRECTORY: "./"
 
 jobs:
-  terraform:
-    name: "Terraform Apply"
-    runs-on: ubuntu-latest
+  plan:
+    name: "Terraform Plan"
+    runs-on: [ self-hosted, intranet ]
     permissions:
       contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Upload Configuration
-        uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.0.0
-        id: apply-upload
-        with:
-          workspace: ${{ env.TF_WORKSPACE }}
-          directory: ${{ env.CONFIG_DIRECTORY }}
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
 
-      - name: Create Apply Run
-        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
-        id: apply-run
-        with:
-          workspace: ${{ env.TF_WORKSPACE }}
-          configuration_version: ${{ steps.apply-upload.outputs.configuration_version_id }}
+      - name: Terraform init
+        run: terraform init -input=false
 
-      - name: Apply
-        uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.0.0
-        if: fromJSON(steps.apply-run.outputs.payload).data.attributes.actions.IsConfirmable
-        id: apply
+      - name: Terraform plan
+        id: plan
+        run: terraform plan -input=false -out tfplan
+
+      - name: Upload plan artifact
+        uses: actions/upload-artifact@v3
         with:
-          run: ${{ steps.apply-run.outputs.run_id }}
-          comment: "Apply Run from GitHub Actions CI ${{ github.sha }}"
+          name: tfplan
+          path: tfplan
+
+  apply:
+    name: "Terraform Apply"
+    runs-on: [ self-hosted, intranet ]
+    permissions:
+      contents: read
+    needs:
+      - plan
+    environment: onpremise
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Terraform init
+        run: terraform init -input=false
+      - name: Download terraform plan
+        uses: actions/download-artifact@v3
+        with:
+          name: tfplan
+      
+      - name: Terraform apply
+        run: terraform apply -input=false tfplan
