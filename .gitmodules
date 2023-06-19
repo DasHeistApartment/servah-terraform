@@ -1,0 +1,3 @@
+[submodule "metalpyports"]
+	path = modules/k8s/in_cluster/networking/metalpyports
+	url = https://github.com/DasHeistApartment/metalpyports
