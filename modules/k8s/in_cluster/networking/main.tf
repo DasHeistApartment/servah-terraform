@@ -11,33 +11,6 @@ terraform {
   }
 }
 
-resource "kubernetes_namespace" "metal_lb" {
-  metadata {
-    name = "metallb-system"
-    labels = {
-      "pod-security.kubernetes.io/enforce" = "privileged"
-      "pod-security.kubernetes.io/audit"   = "privileged"
-      "pod-security.kubernetes.io/warn"    = "privileged"
-    }
-  }
-}
-
-resource "helm_release" "metal_lb" {
-  name       = "metallb"
-  namespace  = kubernetes_namespace.metal_lb.metadata.0.name
-  repository = "https://metallb.github.io/metallb"
-  chart      = "metallb"
-}
-
-resource "helm_release" "metal_lb_setup" {
-  namespace = helm_release.metal_lb.metadata.0.namespace
-
-  name  = "metallb-setup"
-  chart = "${path.module}/charts/metallb-setup"
-
-  depends_on = [helm_release.metal_lb]
-}
-
 resource "helm_release" "nginx_controller" {
   namespace = "ingress-nginx"
 
@@ -46,8 +19,6 @@ resource "helm_release" "nginx_controller" {
   chart            = "nginx-ingress"
   version          = "0.17.1"
   create_namespace = true
-
-  depends_on = [helm_release.metal_lb_setup]
 }
 
 resource "helm_release" "cert_manager" {
