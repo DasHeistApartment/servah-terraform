@@ -1,0 +1,1 @@
+portforward_config_url = "https://raw.githubusercontent.com/DasHeistApartment/service-configurations/main/networking/portforward.json"
