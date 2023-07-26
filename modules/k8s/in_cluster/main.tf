@@ -24,6 +24,8 @@ terraform {
 
 module "networking" {
   source = "./networking"
+
+  portforward_config_url = var.portforward_config_url
 }
 
 # note: check out https://github.com/JamesLaverack/holepunch for automatic port forwardings

@@ -16,6 +16,9 @@ crash.*.log
 *.tfvars
 *.tfvars.json
 
+# Explicitly include variables.auto.tfvars, as this only contains non-sensitive data, and only one environment exists at the moment.
+!variables.auto.tfvars
+
 # Ignore override files as they are usually used to override resources locally and so
 # are not checked in
 override.tf
