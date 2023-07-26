@@ -99,7 +99,8 @@ resource "kubernetes_deployment" "portforward" {
 
 resource "kubernetes_service" "portforward" {
   metadata {
-    name = "portforward-service"
+    name      = "portforward-service"
+    namespace = kubernetes_namespace.networking.metadata.0.name
   }
   spec {
     selector = {
