@@ -50,9 +50,11 @@ resource "kubernetes_ingress_v1" "github_webhook_server" {
     }
 
     rule {
+      host = "home.crazypokemondev.de"
+
       http {
         path {
-          path = "/actions-runner-controller-github-webhook-server"
+          path      = "/actions-runner-controller-github-webhook-server"
           path_type = "Prefix"
           backend {
             service {

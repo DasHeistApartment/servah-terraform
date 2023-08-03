@@ -129,6 +129,8 @@ resource "kubernetes_ingress_v1" "portforward" {
     }
 
     rule {
+      host = "home.crazypokemondev.de"
+
       http {
         path {
           path      = "/portforward"
@@ -146,3 +148,5 @@ resource "kubernetes_ingress_v1" "portforward" {
     }
   }
 }
+
+# TODO: reintroduce metallb with only node IP as range? https://stackoverflow.com/questions/67991420/why-does-attempting-to-connect-to-my-ingress-show-connection-refused
