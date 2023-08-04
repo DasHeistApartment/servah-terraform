@@ -40,6 +40,7 @@ resource "kubernetes_ingress_v1" "github_webhook_server" {
     annotations = {
       "nginx.ingress.kubernetes.io/backend-protocol" = "HTTP"
       "cert-manager.io/cluster-issuer"               = "letsencrypt-staging"
+      "acme.cert-manager.io/http01-edit-in-place"    = "true"
     }
   }
 
