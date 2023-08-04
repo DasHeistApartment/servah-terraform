@@ -32,7 +32,9 @@ module "kubernetes_in_cluster" {
 
   tfc_agent_token        = var.tfc_agent_token
   github_pat_arc         = var.github_pat_arc
-  portforward_config_url = var.portforward_config_url
+  portforward_config_url = local.portforward_config_url
+  acme_email             = local.acme_email
+  metallb_address_pool   = local.metallb_address_pool
 
   depends_on = [module.proxmox_kubernetes_cluster]
 }

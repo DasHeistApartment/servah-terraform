@@ -26,6 +26,8 @@ module "networking" {
   source = "./networking"
 
   portforward_config_url = var.portforward_config_url
+  acme_email             = var.acme_email
+  metallb_address_pool   = var.metallb_address_pool
 }
 
 # note: check out https://github.com/JamesLaverack/holepunch for automatic port forwardings
