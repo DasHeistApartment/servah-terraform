@@ -8,6 +8,10 @@ terraform {
       source  = "hashicorp/helm"
       version = ">= 2.0.0"
     }
+    kubectl = {
+      source  = "gavinbunney/kubectl"
+      version = ">= 1.7.0"
+    }
   }
 }
 
@@ -34,13 +38,30 @@ resource "helm_release" "cert_manager" {
   }
 }
 
-resource "helm_release" "acme_setup" {
-  namespace = helm_release.cert_manager.metadata.0.namespace
-
-  name  = "acme-setup"
-  chart = "${path.module}/charts/acme-setup"
-
+resource "kubectl_manifest" "acme_cluster_issuer" {
   depends_on = [helm_release.cert_manager]
+  yaml_body  = <<YAML
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-staging
+spec:
+  acme:
+    # You must replace this email address with your own.
+    # Let's Encrypt will use this to contact you about expiring
+    # certificates, and issues related to your account.
+    email: ${var.acme_email}
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      # Secret resource that will be used to store the account's private key.
+      name: letsencrypt-staging
+    # Add a single challenge solver, HTTP01 using nginx
+    solvers:
+    - http01:
+        ingress:
+          ingressClassName: nginx
+
+YAML
 }
 
 resource "kubernetes_namespace" "networking" {
@@ -149,4 +170,36 @@ resource "kubernetes_ingress_v1" "portforward" {
   }
 }
 
-# TODO: reintroduce metallb with only node IP as range? https://stackoverflow.com/questions/67991420/why-does-attempting-to-connect-to-my-ingress-show-connection-refused
+resource "kubernetes_namespace" "metal_lb" {
+  metadata {
+    name = "metallb-system"
+    labels = {
+      "pod-security.kubernetes.io/enforce" = "privileged"
+      "pod-security.kubernetes.io/audit"   = "privileged"
+      "pod-security.kubernetes.io/warn"    = "privileged"
+    }
+  }
+}
+
+resource "helm_release" "metal_lb" {
+  name       = "metallb"
+  namespace  = kubernetes_namespace.metal_lb.metadata.0.name
+  repository = "https://metallb.github.io/metallb"
+  chart      = "metallb"
+}
+
+resource "kubectl_manifest" "metallb_default_address_pool" {
+  depends_on = [helm_release.metal_lb]
+
+  yaml_body = <<YAML
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: default-pool
+  namespace: metallb-system
+spec:
+  addresses:
+  - ${join("\n- ", var.metallb_address_pool)}
+  avoidBuggyIPs: true
+YAML
+}
