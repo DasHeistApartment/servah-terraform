@@ -140,6 +140,9 @@ resource "kubernetes_ingress_v1" "portforward" {
   metadata {
     namespace = kubernetes_namespace.networking.metadata.0.name
     name      = "ingress-portforward"
+    annotations = {
+      "cert-manager.io/cluster-issuer" = "letsencrypt-staging"
+    }
   }
 
   spec {
