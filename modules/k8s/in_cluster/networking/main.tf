@@ -40,6 +40,7 @@ resource "helm_release" "cert_manager" {
 
 resource "kubectl_manifest" "acme_cluster_issuer" {
   depends_on = [helm_release.cert_manager]
+  force_new  = true
   yaml_body  = <<YAML
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
