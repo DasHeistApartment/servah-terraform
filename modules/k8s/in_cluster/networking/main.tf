@@ -63,7 +63,6 @@ spec:
           ingressTemplate:
             metadata:
               annotations:
-                ingress.kubernetes.io/ssl-redirect: "false"
                 nginx.org/mergeable-ingress-type: minion
 
 YAML
@@ -154,8 +153,9 @@ resource "kubernetes_ingress_v1" "master" {
     namespace = kubernetes_namespace.networking.metadata.0.name
     name      = "ingress-master"
     annotations = {
-      "cert-manager.io/cluster-issuer"   = "letsencrypt-staging"
-      "nginx.org/mergeable-ingress-type" = "master"
+      "cert-manager.io/cluster-issuer"     = "letsencrypt-staging"
+      "nginx.org/mergeable-ingress-type"   = "master"
+      "ingress.kubernetes.io/ssl-redirect" = "false"
     }
   }
 
