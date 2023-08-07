@@ -75,6 +75,108 @@ resource "kubernetes_namespace" "networking" {
   }
 }
 
+resource "kubernetes_deployment" "web-redirect" {
+  metadata {
+    namespace = kubernetes_namespace.networking.metadata.0.name
+    name      = "web-redirect"
+
+    labels = {
+      deployment = "web-redirect"
+      app        = "web-redirect"
+    }
+  }
+
+  spec {
+    replicas = 1
+
+    selector {
+      match_labels = {
+        deployment = "web-redirect"
+      }
+    }
+
+    template {
+      metadata {
+        namespace = kubernetes_namespace.networking.metadata.0.name
+        labels = {
+          deployment = "web-redirect"
+          app        = "web-redirect"
+        }
+      }
+
+      spec {
+        container {
+          name  = "redirect"
+          image = "morbz/docker-web-redirect:latest"
+
+          env {
+            name  = "VIRTUAL_HOST"
+            value = "home.crazypokemondev.de"
+          }
+          env {
+            name  = "REDIRECT_TARGET"
+            value = "DasHeistApartment.github.io"
+          }
+          env {
+            name  = "REDIRECT_TYPE"
+            value = "redirect"
+          }
+          port {
+            container_port = 80
+            name           = "http"
+          }
+        }
+      }
+    }
+  }
+}
+
+resource "kubernetes_service" "web-redirect" {
+  metadata {
+    name      = "web-redirect-service"
+    namespace = kubernetes_namespace.networking.metadata.0.name
+  }
+  spec {
+    selector = {
+      app = kubernetes_deployment.web-redirect.metadata.0.labels.app
+    }
+    port {
+      protocol    = "TCP"
+      port        = 80
+      target_port = kubernetes_deployment.portforward.spec.0.template.0.spec.0.container.0.port.0.name
+      name        = "http"
+    }
+  }
+}
+
+resource "kubernetes_ingress_v1" "master" {
+  metadata {
+    namespace = kubernetes_namespace.networking.metadata.0.name
+    name      = "ingress-master"
+    annotations = {
+      "cert-manager.io/cluster-issuer"   = "letsencrypt-staging"
+      "nginx.org/mergeable-ingress-type" = "master"
+    }
+  }
+
+  spec {
+    ingress_class_name = "nginx"
+    tls {
+      hosts       = ["home.crazypokemondev.de"]
+      secret_name = "letsencrypt-staging"
+    }
+
+    default_backend {
+      service {
+        name = kubernetes_service.web-redirect.metadata.0.name
+        port {
+          name = kubernetes_service.web-redirect.spec.0.port.0.name
+        }
+      }
+    }
+  }
+}
+
 resource "kubernetes_deployment" "portforward" {
   metadata {
     namespace = kubernetes_namespace.networking.metadata.0.name
@@ -137,25 +239,6 @@ resource "kubernetes_service" "portforward" {
       port        = 80
       target_port = kubernetes_deployment.portforward.spec.0.template.0.spec.0.container.0.port.0.name
       name        = "http"
-    }
-  }
-}
-
-resource "kubernetes_ingress_v1" "master" {
-  metadata {
-    namespace = kubernetes_namespace.networking.metadata.0.name
-    name      = "ingress-master"
-    annotations = {
-      "cert-manager.io/cluster-issuer"   = "letsencrypt-staging"
-      "nginx.org/mergeable-ingress-type" = "master"
-    }
-  }
-
-  spec {
-    ingress_class_name = "nginx"
-    tls {
-      hosts       = ["home.crazypokemondev.de"]
-      secret_name = "letsencrypt-staging"
     }
   }
 }
