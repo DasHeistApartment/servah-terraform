@@ -125,10 +125,6 @@ resource "kubernetes_deployment" "web-redirect" {
             container_port = 80
             name           = "http"
           }
-          port {
-            container_port = 443
-            name           = "https"
-          }
         }
       }
     }
@@ -149,12 +145,6 @@ resource "kubernetes_service" "web-redirect" {
       port        = 80
       target_port = kubernetes_deployment.portforward.spec.0.template.0.spec.0.container.0.port.0.name
       name        = "http"
-    }
-    port {
-      protocol    = "TCP"
-      port        = 443
-      target_port = kubernetes_deployment.web-redirect.spec.0.template.0.spec.0.container.0.port.1.name
-      name        = "https"
     }
   }
 }
@@ -181,9 +171,6 @@ resource "kubernetes_ingress_v1" "master" {
         name = kubernetes_service.web-redirect.metadata.0.name
         port {
           name = kubernetes_service.web-redirect.spec.0.port.0.name
-        }
-        port {
-          name = kubernetes_service.web-redirect.spec.0.port.1.name
         }
       }
     }
