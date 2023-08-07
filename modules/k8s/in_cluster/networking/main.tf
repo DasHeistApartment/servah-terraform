@@ -64,7 +64,7 @@ spec:
           ingressTemplate:
             metadata:
               annotations:
-                - nginx.ingress.kubernetes.io/ssl-redirect: "false"
+                - ingress.kubernetes.io/ssl-redirect: "false"
 
 YAML
 }
