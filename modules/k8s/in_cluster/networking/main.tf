@@ -175,6 +175,18 @@ resource "kubernetes_ingress_v1" "master" {
       hosts       = ["home.crazypokemondev.de"]
       secret_name = "letsencrypt-staging"
     }
+
+    default_backend {
+      service {
+        name = kubernetes_service.web-redirect.metadata.0.name
+        port {
+          name = kubernetes_service.web-redirect.spec.0.port.0.name
+        }
+        port {
+          name = kubernetes_service.web-redirect.spec.0.port.1.name
+        }
+      }
+    }
   }
 }
 
