@@ -40,15 +40,12 @@ resource "kubernetes_ingress_v1" "github_webhook_server" {
     annotations = {
       "nginx.ingress.kubernetes.io/backend-protocol" = "HTTP"
       "cert-manager.io/cluster-issuer"               = "letsencrypt-staging"
+      "nginx.org/mergeable-ingress-type"             = "minion"
     }
   }
 
   spec {
     ingress_class_name = "nginx"
-    tls {
-      hosts       = ["home.crazypokemondev.de"]
-      secret_name = "letsencrypt-staging"
-    }
 
     rule {
       host = "home.crazypokemondev.de"

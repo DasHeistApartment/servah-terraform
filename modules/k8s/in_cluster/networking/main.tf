@@ -64,6 +64,7 @@ spec:
             metadata:
               annotations:
                 ingress.kubernetes.io/ssl-redirect: "false"
+                nginx.org/mergeable-ingress-type: minion
 
 YAML
 }
@@ -140,12 +141,13 @@ resource "kubernetes_service" "portforward" {
   }
 }
 
-resource "kubernetes_ingress_v1" "portforward" {
+resource "kubernetes_ingress_v1" "master" {
   metadata {
     namespace = kubernetes_namespace.networking.metadata.0.name
-    name      = "ingress-portforward"
+    name      = "ingress-master"
     annotations = {
-      "cert-manager.io/cluster-issuer" = "letsencrypt-staging"
+      "cert-manager.io/cluster-issuer"   = "letsencrypt-staging"
+      "nginx.org/mergeable-ingress-type" = "master"
     }
   }
 
@@ -155,7 +157,21 @@ resource "kubernetes_ingress_v1" "portforward" {
       hosts       = ["home.crazypokemondev.de"]
       secret_name = "letsencrypt-staging"
     }
+  }
+}
 
+resource "kubernetes_ingress_v1" "portforward" {
+  metadata {
+    namespace = kubernetes_namespace.networking.metadata.0.name
+    name      = "ingress-portforward"
+    annotations = {
+      "cert-manager.io/cluster-issuer"   = "letsencrypt-staging"
+      "nginx.org/mergeable-ingress-type" = "minion"
+    }
+  }
+
+  spec {
+    ingress_class_name = "nginx"
     rule {
       host = "home.crazypokemondev.de"
 
