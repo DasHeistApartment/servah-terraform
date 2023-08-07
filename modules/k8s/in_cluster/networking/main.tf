@@ -174,6 +174,9 @@ resource "kubernetes_ingress_v1" "master" {
         }
       }
     }
+    rule {
+      host = "home.crazypokemondev.de"
+    }
   }
 }
 
