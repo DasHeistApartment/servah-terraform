@@ -8,6 +8,10 @@ terraform {
       source  = "hashicorp/helm"
       version = ">= 2.0.0"
     }
+    kubectl = {
+      source  = "gavinbunney/kubectl"
+      version = ">= 1.7.0"
+    }
   }
 }
 
@@ -65,4 +69,40 @@ resource "kubernetes_ingress_v1" "github_webhook_server" {
       }
     }
   }
+}
+
+resource "kubectl_manifest" "organization_runner_deployment" {
+  depends_on = [helm_release.actions_runner_controller]
+  yaml_body  = <<YAML
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: RunnerDeployment
+metadata:
+  name: organization-runner
+spec:
+  template:
+    spec:
+      organization: DasHeistApartment
+      labels:
+        - intranet
+YAML
+}
+
+resource "kubectl_manifest" "organization_runner_autoscaler" {
+  depends_on = [helm_release.actions_runner_controller]
+  yaml_body  = <<YAML
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: HorizontalRunnerAutoscaler
+metadata:
+  name: organization-runners
+spec:
+  minReplicas: 1
+  maxReplicas: 5
+  scaleTargetRef:
+    kind: RunnerDeployment
+    name: organization-runner
+  scaleUpTriggers:
+    - githubEvent:
+        workflowJob: {}
+      duration: "35m"
+YAML
 }
