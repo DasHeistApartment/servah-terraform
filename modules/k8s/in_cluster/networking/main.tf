@@ -68,6 +68,36 @@ spec:
 YAML
 }
 
+resource "kubectl_manifest" "acme_cluster_issuer_prod" {
+  depends_on = [helm_release.cert_manager]
+  yaml_body  = <<YAML
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt
+spec:
+  acme:
+    # You must replace this email address with your own.
+    # Let's Encrypt will use this to contact you about expiring
+    # certificates, and issues related to your account.
+    email: ${var.acme_email}
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      # Secret resource that will be used to store the account's private key.
+      name: letsencrypt
+    # Add a single challenge solver, HTTP01 using nginx
+    solvers:
+    - http01:
+        ingress:
+          ingressClassName: nginx
+          ingressTemplate:
+            metadata:
+              annotations:
+                nginx.org/mergeable-ingress-type: minion
+
+YAML
+}
+
 resource "kubernetes_namespace" "networking" {
   metadata {
     name = "networking"
@@ -79,7 +109,7 @@ resource "kubernetes_ingress_v1" "master" {
     namespace = kubernetes_namespace.networking.metadata.0.name
     name      = "ingress-master"
     annotations = {
-      "cert-manager.io/cluster-issuer"     = "letsencrypt-staging"
+      "cert-manager.io/cluster-issuer"     = "letsencrypt"
       "nginx.org/mergeable-ingress-type"   = "master"
       "ingress.kubernetes.io/ssl-redirect" = "false"
     }
@@ -169,7 +199,6 @@ resource "kubernetes_ingress_v1" "portforward" {
     namespace = kubernetes_namespace.networking.metadata.0.name
     name      = "ingress-portforward"
     annotations = {
-      "cert-manager.io/cluster-issuer"   = "letsencrypt-staging"
       "nginx.org/mergeable-ingress-type" = "minion"
     }
   }
