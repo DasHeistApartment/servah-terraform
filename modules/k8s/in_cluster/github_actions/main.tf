@@ -39,7 +39,6 @@ resource "kubernetes_ingress_v1" "github_webhook_server" {
     name      = "actions-runner-controller-github-webhook-server"
     annotations = {
       "nginx.ingress.kubernetes.io/backend-protocol" = "HTTP"
-      "cert-manager.io/cluster-issuer"               = "letsencrypt-staging"
       "nginx.org/mergeable-ingress-type"             = "minion"
     }
   }
