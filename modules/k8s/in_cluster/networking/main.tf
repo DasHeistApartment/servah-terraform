@@ -104,12 +104,6 @@ resource "kubernetes_namespace" "networking" {
   }
 }
 
-resource "kubernetes_namespace" "networking" {
-  metadata {
-    name = "networking"
-  }
-}
-
 resource "kubernetes_ingress_v1" "master" {
   metadata {
     namespace = kubernetes_namespace.networking.metadata.0.name
