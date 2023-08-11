@@ -106,3 +106,37 @@ spec:
       duration: "35m"
 YAML
 }
+
+resource "kubectl_manifest" "chormaeleon_runner_deployment" {
+  depends_on = [helm_release.actions_runner_controller]
+  yaml_body  = <<YAML
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: RunnerDeployment
+metadata:
+  name: chormaeleon-runner
+spec:
+  template:
+    spec:
+      organization: Chormaeleon
+YAML
+}
+
+resource "kubectl_manifest" "chormaeleon_runner_autoscaler" {
+  depends_on = [helm_release.actions_runner_controller]
+  yaml_body  = <<YAML
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: HorizontalRunnerAutoscaler
+metadata:
+  name: chormaeleon-runners
+spec:
+  minReplicas: 0
+  maxReplicas: 3
+  scaleTargetRef:
+    kind: RunnerDeployment
+    name: chormaeleon-runner
+  scaleUpTriggers:
+    - githubEvent:
+        workflowJob: {}
+      duration: "35m"
+YAML
+}
