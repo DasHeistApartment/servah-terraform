@@ -95,7 +95,7 @@ kind: HorizontalRunnerAutoscaler
 metadata:
   name: organization-runners
 spec:
-  minReplicas: 0
+  minReplicas: 1
   maxReplicas: 5
   scaleTargetRef:
     kind: RunnerDeployment
