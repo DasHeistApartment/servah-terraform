@@ -42,7 +42,7 @@ module "github_actions" {
 }
 
 data "kustomization_build" "argocd" {
-  path = "./argocd"
+  path = "${path.module}/argocd"
 }
 
 resource "kustomization_resource" "argocd_p0" {
