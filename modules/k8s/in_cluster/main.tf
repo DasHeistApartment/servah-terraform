@@ -52,7 +52,7 @@ resource "kubectl_manifest" "argocd" {
 }
 
 resource "kubernetes_ingress_v1" "argocd" {
-  depends_on = kubectl_manifest.argocd
+  depends_on = [ kubectl_manifest.argocd ]
 
   metadata {
     name      = "argocd"
