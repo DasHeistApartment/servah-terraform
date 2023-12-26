@@ -58,6 +58,7 @@ resource "kubernetes_ingress_v1" "argocd" {
     name      = "argo-cd"
     annotations = {
       "cert-manager.io/cluster-issuer"     = "letsencrypt"
+      "nginx.org/mergeable-ingress-type"   = "master"
       "ingress.kubernetes.io/ssl-redirect" = "false"
     }
   }
