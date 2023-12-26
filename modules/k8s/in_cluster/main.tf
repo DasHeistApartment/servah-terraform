@@ -42,7 +42,7 @@ data "http" "argocd_manifest_raw" {
 }
 
 data "kubectl_file_documents" "argocd_manifest_doc" {
-  content = data.http.argocd_manifest_raw.body
+  content = data.http.argocd_manifest_raw.response_body
 }
 
 resource "kubectl_manifest" "argocd" {
