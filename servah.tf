@@ -26,6 +26,10 @@ terraform {
       source  = "gavinbunney/kubectl"
       version = ">= 1.7.0"
     }
+    kustomization = {
+      source  = "kbst/kustomization"
+      version = "0.9.0"
+    }
   }
 }
 
@@ -48,6 +52,10 @@ provider "proxmox" {
 
 provider "kubectl" {
   load_config_file = false
+}
+
+provider "kustomization" {
+  kubeconfig_incluster = true
 }
 
 module "proxmox_kubernetes_cluster" {
