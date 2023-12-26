@@ -50,3 +50,36 @@ resource "kubectl_manifest" "argocd" {
   yaml_body = each.value
   wait      = true
 }
+
+resource "kubernetes_ingress_v1" "argocd" {
+  depends_on = kubectl_manifest.argocd
+
+  metadata {
+    name      = "argocd"
+    annotations = {
+      "nginx.org/mergeable-ingress-type" = "minion"
+    }
+  }
+
+  spec {
+    ingress_class_name = "nginx"
+    rule {
+      host = "argocd.crazypokemondev.de"
+
+      http {
+        path {
+          path      = "/"
+          path_type = "Prefix"
+          backend {
+            service {
+              name = "argocd-server"
+              port {
+                number = 8080
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
