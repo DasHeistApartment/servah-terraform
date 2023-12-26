@@ -48,4 +48,5 @@ data "kubectl_file_documents" "argocd_manifest_doc" {
 resource "kubectl_manifest" "argocd" {
   for_each  = data.kubectl_file_documents.argocd_manifest_doc.manifests
   yaml_body = each.value
+  wait      = true
 }
