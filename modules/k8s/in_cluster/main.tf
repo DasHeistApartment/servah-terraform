@@ -19,10 +19,6 @@ terraform {
   }
 }
 
-provider "kustomization" {
-  kubeconfig_incluster = true
-}
-
 module "networking" {
   source = "./networking"
 
