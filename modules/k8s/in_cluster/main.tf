@@ -63,11 +63,6 @@ resource "kustomization_resource" "argocd_p1" {
     ? sensitive(data.kustomization_build.argocd.manifests[each.value])
     : data.kustomization_build.argocd.manifests[each.value]
   )
-  wait = true
-  timeouts {
-    create = "2m"
-    update = "2m"
-  }
 
   depends_on = [kustomization_resource.argocd_p0]
 }
