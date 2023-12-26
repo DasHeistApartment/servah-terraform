@@ -56,9 +56,6 @@ resource "kubernetes_ingress_v1" "argocd" {
 
   metadata {
     name      = "argocd"
-    annotations = {
-      "nginx.org/mergeable-ingress-type" = "minion"
-    }
   }
 
   spec {
