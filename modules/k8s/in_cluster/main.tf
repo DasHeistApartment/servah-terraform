@@ -38,7 +38,7 @@ module "github_actions" {
 }
 
 data "http" "argocd_manifest_raw" {
-  url = ""
+  url = "https://raw.githubusercontent.com/argoproj/argo-cd/v2.9.3/manifests/install.yaml"
 }
 
 data "kubectl_file_documents" "argocd_manifest_doc" {
