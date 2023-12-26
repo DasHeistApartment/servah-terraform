@@ -36,3 +36,16 @@ module "github_actions" {
 
   github_pat_arc = var.github_pat_arc
 }
+
+data "http" "argocd_manifest_raw" {
+  url = ""
+}
+
+data "kubectl_file_documents" "argocd_manifest_doc" {
+  content = data.http.argocd_manifest_raw.body
+}
+
+resource "kubectl_manifest" "argocd" {
+  for_each  = data.kubectl_file_documents.argocd_manifest_doc.manifests
+  yaml_body = each.value
+}
