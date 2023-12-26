@@ -55,13 +55,23 @@ resource "kubernetes_ingress_v1" "argocd" {
   depends_on = [ kubectl_manifest.argocd ]
 
   metadata {
-    name      = "argocd"
+    name      = "argo-cd"
+    annotations = {
+      "cert-manager.io/cluster-issuer"     = "letsencrypt"
+      "ingress.kubernetes.io/ssl-redirect" = "false"
+    }
   }
 
   spec {
     ingress_class_name = "nginx"
+
+    tls {
+      hosts       = ["argo-cd.crazypokemondev.de"]
+      secret_name = "letsencrypt-staging"
+    }
+
     rule {
-      host = "argocd.crazypokemondev.de"
+      host = "argo-cd.crazypokemondev.de"
 
       http {
         path {
