@@ -85,6 +85,7 @@ resource "kubernetes_deployment" "tfc_agent" {
 
       spec {
         service_account_name = kubernetes_service_account.tfc_agent.metadata.0.name
+        restart_policy       = "Never"
 
         container {
           name  = "agent"
