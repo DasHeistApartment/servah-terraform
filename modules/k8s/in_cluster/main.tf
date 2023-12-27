@@ -51,7 +51,7 @@ resource "kubectl_manifest" "argocd" {
   wait      = true
 }
 
-resource "kubernetes_ingress_v1" "argocd" {
+resource "kubernetes_ingress_v1" "argocd_master" {
   metadata {
     name      = "argo-cd"
     annotations = {
@@ -68,6 +68,19 @@ resource "kubernetes_ingress_v1" "argocd" {
       hosts       = ["argo-cd.crazypokemondev.de"]
       secret_name = "letsencrypt-staging"
     }
+  }
+}
+
+resource "kubernetes_ingress_v1" "argocd_minion" {
+  metadata {
+    name      = "argo-cd-minion"
+    annotations = {
+      "nginx.org/mergeable-ingress-type"   = "minion"
+    }
+  }
+
+  spec {
+    ingress_class_name = "nginx"
 
     rule {
       host = "argo-cd.crazypokemondev.de"
