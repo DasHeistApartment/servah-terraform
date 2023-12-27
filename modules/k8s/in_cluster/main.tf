@@ -9,8 +9,8 @@ terraform {
       version = ">= 2.0.0"
     }
     kubectl = {
-      source  = "gavinbunney/kubectl"
-      version = ">= 1.7.0"
+      source  = "alekc/kubectl"
+      version = ">= 2.0.0"
     }
   }
 }
@@ -35,6 +35,20 @@ module "github_actions" {
   source = "./github_actions"
 
   github_pat_arc = var.github_pat_arc
+}
+
+data "http" "argocd_manifest_raw" {
+  url = "https://raw.githubusercontent.com/argoproj/argo-cd/v2.9.3/manifests/install.yaml"
+}
+
+data "kubectl_file_documents" "argocd_manifest_doc" {
+  content = data.http.argocd_manifest_raw.response_body
+}
+
+resource "kubectl_manifest" "argocd" {
+  for_each  = data.kubectl_file_documents.argocd_manifest_doc.manifests
+  yaml_body = each.value
+  wait      = true
 }
 
 resource "kubernetes_ingress_v1" "argocd" {
