@@ -63,9 +63,10 @@ resource "kubernetes_ingress_v1" "argocd_master" {
     namespace   = kubernetes_namespace.argocd.metadata.0.name
     name        = "argo-cd"
     annotations = {
-      "cert-manager.io/cluster-issuer"     = "letsencrypt"
-      "nginx.org/mergeable-ingress-type"   = "master"
-      "ingress.kubernetes.io/ssl-redirect" = "true"
+      "cert-manager.io/cluster-issuer"               = "letsencrypt"
+      "nginx.org/mergeable-ingress-type"             = "master"
+      "nginx.ingress.kubernetes.io/ssl-passthrough"  = "true"
+      "nginx.ingress.kubernetes.io/backend-protocol" = "HTTPS"
     }
   }
 
@@ -106,7 +107,7 @@ resource "kubernetes_ingress_v1" "argocd_minion" {
             service {
               name = "argocd-server"
               port {
-                number = 443
+                name = "https"
               }
             }
           }
