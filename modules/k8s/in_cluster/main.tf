@@ -68,6 +68,10 @@ resource "kubernetes_ingress_v1" "argocd_master" {
       hosts       = ["argo-cd.crazypokemondev.de"]
       secret_name = "letsencrypt-staging"
     }
+
+    rule {
+      host = "argo-cd.crazypokemondev.de"
+    }
   }
 }
 
