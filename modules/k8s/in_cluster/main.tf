@@ -37,6 +37,12 @@ module "github_actions" {
   github_pat_arc = var.github_pat_arc
 }
 
+resource "kubernetes_namespace" "argocd" {
+  metadata {
+    name = "argocd"
+  }
+}
+
 data "http" "argocd_manifest_raw" {
   url = "https://raw.githubusercontent.com/argoproj/argo-cd/v2.9.3/manifests/install.yaml"
 }
@@ -49,6 +55,7 @@ resource "kubectl_manifest" "argocd" {
   for_each  = data.kubectl_file_documents.argocd_manifest_doc.manifests
   yaml_body = each.value
   wait      = true
+  override_namespace = kubernetes_namespace.argocd.metadata.0.name
 }
 
 resource "kubernetes_ingress_v1" "argocd_master" {
@@ -97,7 +104,7 @@ resource "kubernetes_ingress_v1" "argocd_minion" {
             service {
               name = "argocd-server"
               port {
-                number = 8080
+                number = 80
               }
             }
           }
