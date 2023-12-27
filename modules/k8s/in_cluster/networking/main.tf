@@ -23,6 +23,11 @@ resource "helm_release" "nginx_controller" {
   chart            = "nginx-ingress"
   version          = "0.17.1"
   create_namespace = true
+
+  set {
+    name  = "controller.extraArgs.enable-ssl-passthrough"
+    value = ""
+  }
 }
 
 resource "helm_release" "cert_manager" {
