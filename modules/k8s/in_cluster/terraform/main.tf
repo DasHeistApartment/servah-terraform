@@ -89,7 +89,7 @@ resource "kubernetes_deployment" "tfc_agent" {
         container {
           name  = "agent"
           image = "hashicorp/tfc-agent:latest"
-          args  = ["-single"]
+          command = "/home/tfc-agent/bin/tfc-agent -single | tail -f /dev/null"
 
           env {
             name = "TFC_AGENT_TOKEN"
