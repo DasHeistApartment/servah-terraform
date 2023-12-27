@@ -46,7 +46,7 @@ resource "proxmox_vm_qemu" "k8s_node_0" {
   qemu_os     = "other"
 
   cores  = 4
-  memory = 8192
+  memory = 12288
 
   disk {
     type    = "scsi"
