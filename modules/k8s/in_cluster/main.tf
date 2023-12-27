@@ -84,7 +84,8 @@ resource "kubernetes_ingress_v1" "argocd_master" {
 
 resource "kubernetes_ingress_v1" "argocd_minion" {
   metadata {
-    name      = "argo-cd-minion"
+    namespace   = kubernetes_namespace.argocd.metadata.0.name
+    name        = "argo-cd-minion"
     annotations = {
       "nginx.org/mergeable-ingress-type"   = "minion"
     }
