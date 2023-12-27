@@ -60,11 +60,12 @@ resource "kubectl_manifest" "argocd" {
 
 resource "kubernetes_ingress_v1" "argocd_master" {
   metadata {
-    name      = "argo-cd"
+    namespace   = kubernetes_namespace.argocd.metadata.0.name
+    name        = "argo-cd"
     annotations = {
       "cert-manager.io/cluster-issuer"     = "letsencrypt"
       "nginx.org/mergeable-ingress-type"   = "master"
-      "ingress.kubernetes.io/ssl-redirect" = "false"
+      "ingress.kubernetes.io/ssl-redirect" = "true"
     }
   }
 
@@ -105,7 +106,7 @@ resource "kubernetes_ingress_v1" "argocd_minion" {
             service {
               name = "argocd-server"
               port {
-                number = 80
+                number = 443
               }
             }
           }
