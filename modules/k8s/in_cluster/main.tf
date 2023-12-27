@@ -43,12 +43,8 @@ resource "kubernetes_namespace" "argocd" {
   }
 }
 
-data "http" "argocd_manifest_raw" {
-  url = "https://raw.githubusercontent.com/argoproj/argo-cd/v2.9.3/manifests/install.yaml"
-}
-
 data "kubectl_file_documents" "argocd_manifest_doc" {
-  content = data.http.argocd_manifest_raw.response_body
+  content = file("${path.module}/argocd_install.yaml")
 }
 
 resource "kubectl_manifest" "argocd" {
