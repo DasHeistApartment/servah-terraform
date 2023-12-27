@@ -43,12 +43,8 @@ resource "kubernetes_namespace" "argocd" {
   }
 }
 
-data "http" "argocd_manifest_raw" {
-  url = "https://raw.githubusercontent.com/argoproj/argo-cd/v2.9.3/manifests/install.yaml"
-}
-
 data "kubectl_file_documents" "argocd_manifest_doc" {
-  content = data.http.argocd_manifest_raw.response_body
+  content = file("${path.module}/argocd_install.yaml")
 }
 
 resource "kubectl_manifest" "argocd" {
@@ -61,12 +57,10 @@ resource "kubectl_manifest" "argocd" {
 resource "kubernetes_ingress_v1" "argocd_master" {
   metadata {
     namespace   = kubernetes_namespace.argocd.metadata.0.name
-    name        = "argo-cd"
+    name        = "argo-cd-master"
     annotations = {
       "cert-manager.io/cluster-issuer"               = "letsencrypt"
       "nginx.org/mergeable-ingress-type"             = "master"
-      "nginx.ingress.kubernetes.io/ssl-passthrough"  = "true"
-      "nginx.ingress.kubernetes.io/backend-protocol" = "HTTPS"
     }
   }
 
@@ -75,7 +69,7 @@ resource "kubernetes_ingress_v1" "argocd_master" {
 
     tls {
       hosts       = ["argo-cd.crazypokemondev.de"]
-      secret_name = "letsencrypt-staging"
+      secret_name = "letsencrypt"
     }
 
     rule {
@@ -107,7 +101,7 @@ resource "kubernetes_ingress_v1" "argocd_minion" {
             service {
               name = "argocd-server"
               port {
-                name = "https"
+                name = "http"
               }
             }
           }

@@ -51,7 +51,7 @@ resource "proxmox_vm_qemu" "k8s_node_0" {
   disk {
     type    = "scsi"
     storage = "Kingston500GBNVMe1"
-    size    = "32G"
+    size    = "64G"
     ssd     = 1
   }
 
