@@ -53,11 +53,7 @@ resource "kubernetes_secret" "argocd-dex" {
     name      = "argocd-dex-secret"
   }
   data = {
-    dex = {
-      github = {
-        clientSecret = var.argocd_github_app_secret
-      }
-    }
+    "dex.github.clientSecret" = var.argocd_github_app_secret
   }
 }
 
