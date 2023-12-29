@@ -71,6 +71,7 @@ module "argocd_kustomize" {
           labels = {
             "app.kubernetes.io/part-of" = "argocd"
           }
+          disable_name_suffix_hash = true
         }
       }]
 
