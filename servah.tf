@@ -57,12 +57,13 @@ module "proxmox_kubernetes_cluster" {
 module "kubernetes_in_cluster" {
   source = "./modules/k8s/in_cluster"
 
-  tfc_agent_token        = var.tfc_agent_token
-  github_pat_arc         = var.github_pat_arc
-  portforward_config_url = local.portforward_config_url
-  acme_email             = local.acme_email
-  metallb_address_pool   = local.metallb_address_pool
-  argocd_host            = local.argocd_host
+  tfc_agent_token          = var.tfc_agent_token
+  github_pat_arc           = var.github_pat_arc
+  portforward_config_url   = local.portforward_config_url
+  acme_email               = local.acme_email
+  metallb_address_pool     = local.metallb_address_pool
+  argocd_host              = local.argocd_host
+  argocd_github_app_secret = var.argocd_github_app_secret
 
   depends_on = [module.proxmox_kubernetes_cluster]
 }
