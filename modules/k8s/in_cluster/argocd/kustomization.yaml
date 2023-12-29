@@ -1,6 +1,6 @@
 resources:
 - https://raw.githubusercontent.com/argoproj/argo-cd/v2.9.3/manifests/install.yaml
 
-patchesStrategicMerge:
-- overrides/argocd-cm.yaml 
-- overrides/argocd-cmd-params-cm.yaml
+patches:
+- path: "overrides/argocd-cm.yaml"
+- path: "overrides/argocd-cmd-params-cm.yaml"
