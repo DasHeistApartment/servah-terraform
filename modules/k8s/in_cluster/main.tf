@@ -60,7 +60,7 @@ data "kustomization_overlay" "argocd" {
     literals = [
       "dex.github.clientSecret=${var.argocd_github_app_secret}"
     ]
-    options = {
+    options {
       labels = {
         "app.kubernetes.io/part-of" = "argocd"
       }
