@@ -13,3 +13,7 @@ variable "metallb_address_pool" {
 variable "argocd_host" {
   type = string
 }
+
+variable "argocd_github_app_id" {
+  type = string
+}
