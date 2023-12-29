@@ -79,13 +79,12 @@ module "argocd_kustomize" {
         literals  = [
           "dex.github.clientSecret=${var.argocd_github_app_secret}"
         ]
-        options = {
-          labels = {
-            app.kubernetes.io/part-of = "argocd"
-          }
-        }
       }
     ]
+
+    common_labels = {
+      "app.kubernetes.io/part-of" = "argocd"
+    }
   }
 }
 
