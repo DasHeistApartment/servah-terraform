@@ -47,40 +47,33 @@ resource "kubernetes_namespace" "argocd" {
   }
 }
 
-module "argocd_kustomize" {
-  source  = "kbst.xyz/catalog/custom-manifests/kustomization"
-  version = "0.4.0"
+data "kustomization_overlay" "argocd" {
+  namespace = kubernetes_namespace.argocd.metadata.0.name
 
-  configuration_base_key = "servah-host-workspace"
+  resources = [
+    "https://raw.githubusercontent.com/argoproj/argo-cd/v2.9.3/manifests/install.yaml"
+  ]
 
-  configuration = {
-    servah-host-workspace = {
-      namespace = kubernetes_namespace.argocd.metadata.0.name
+  secret_generator = [{
+    name      = "argocd-dex-secret"
+    namespace = kubernetes_namespace.argocd.metadata.0.name
+    literals = [
+      "dex.github.clientSecret=${var.argocd_github_app_secret}"
+    ]
+    options = {
+      labels = {
+        "app.kubernetes.io/part-of" = "argocd"
+      }
+      disable_name_suffix_hash = true
+    }
+  }]
 
-      resources = [
-        "https://raw.githubusercontent.com/argoproj/argo-cd/v2.9.3/manifests/install.yaml"
-      ]
-
-      secret_generator = [{
-        name      = "argocd-dex-secret"
-        namespace = kubernetes_namespace.argocd.metadata.0.name
-        literals = [
-          "dex.github.clientSecret=${var.argocd_github_app_secret}"
-        ]
-        options = {
-          labels = {
-            "app.kubernetes.io/part-of" = "argocd"
-          }
-          disable_name_suffix_hash = true
-        }
-      }]
-
-      patches = [
-        {
-          path = "${path.module}/argocd/overrides/argocd-cmd-params-cm.yaml"
-        },
-        {
-          patch = <<YAML
+  patches = [
+    {
+      path = "${path.module}/argocd/overrides/argocd-cmd-params-cm.yaml"
+    },
+    {
+      patch = <<YAML
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -101,10 +94,18 @@ data:
             - deployment-admins
           teamNameField: both
 YAML
-        }
-      ]
     }
-  }
+  ]
+}
+
+resource "kustomization_resource" "argocd" {
+  for_each = data.kustomization_build.argocd.ids
+
+  manifest = (
+    contains(["_/Secret"], regex("(?P<group_kind>.*/.*)/.*/.*", each.value)["group_kind"])
+    ? sensitive(data.kustomization_build.argocd.manifests[each.value])
+    : data.kustomization_build.argocd.manifests[each.value]
+  )
 }
 
 resource "kubernetes_ingress_v1" "argocd_master" {
