@@ -99,7 +99,7 @@ module "argocd_kustomize" {
       patches = [
         {
           path = "${path.module}/argocd/overrides/argocd-cmd-parameters-cm.yaml"
-        }
+        },
         {
           path = "${path.module}/argocd/overrides/argocd-cm.yaml"
         }
