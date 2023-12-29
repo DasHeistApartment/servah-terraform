@@ -12,6 +12,10 @@ terraform {
       source  = "alekc/kubectl"
       version = ">= 2.0.0"
     }
+    kustomization = {
+      source  = "kbst/kustomization"
+      version = "0.9.0"
+    }
   }
 }
 
@@ -43,24 +47,75 @@ resource "kubernetes_namespace" "argocd" {
   }
 }
 
-data "kubectl_file_documents" "argocd_manifest_doc" {
-  content = file("${path.module}/argocd_install.yaml")
-}
+module "argocd_kustomize" {
+  source  = "kbst.xyz/catalog/custom-manifests/kustomization"
+  version = "0.4.0"
 
-resource "kubectl_manifest" "argocd" {
-  for_each  = data.kubectl_file_documents.argocd_manifest_doc.manifests
-  yaml_body = each.value
-  wait      = true
-  override_namespace = kubernetes_namespace.argocd.metadata.0.name
+  configuration_base_key = "servah-host-workspace"
+
+  configuration = {
+    servah-host-workspace = {
+      namespace = kubernetes_namespace.argocd.metadata.0.name
+
+      resources = [
+        "https://raw.githubusercontent.com/argoproj/argo-cd/v2.9.3/manifests/install.yaml"
+      ]
+
+      vars = [
+        {
+          name = "ARGOCD_URL"
+          obj_ref = {
+            api_version = "v1"
+            kind        = "ConfigMap"
+            name        = "environment-variables-tf"
+            namespace   = kubernetes_namespace.argocd.metadata.0.name
+          }
+          field_ref = {
+            field_path = "data.ARGOCD_URL"
+          }
+        }
+      ]
+
+      config_map_generator = [{
+        name      = "environment-variables-tf"
+        namespace = kubernetes_namespace.argocd.metadata.0.name
+        literals = [
+          "ARGOCD_URL=https://${var.argocd_host}"
+        ]
+      }]
+
+      secret_generator = [{
+        name      = "argocd-dex-secret"
+        namespace = kubernetes_namespace.argocd.metadata.0.name
+        literals = [
+          "dex.github.clientSecret=${var.argocd_github_app_secret}"
+        ]
+        options = {
+          labels = {
+            "app.kubernetes.io/part-of" = "argocd"
+          }
+        }
+      }]
+
+      patches = [
+        {
+          path = "${path.module}/argocd/overrides/argocd-cmd-params-cm.yaml"
+        },
+        {
+          path = "${path.module}/argocd/overrides/argocd-cm.yaml"
+        }
+      ]
+    }
+  }
 }
 
 resource "kubernetes_ingress_v1" "argocd_master" {
   metadata {
-    namespace   = kubernetes_namespace.argocd.metadata.0.name
-    name        = "argo-cd-master"
+    namespace = kubernetes_namespace.argocd.metadata.0.name
+    name      = "argo-cd-master"
     annotations = {
-      "cert-manager.io/cluster-issuer"               = "letsencrypt"
-      "nginx.org/mergeable-ingress-type"             = "master"
+      "cert-manager.io/cluster-issuer"   = "letsencrypt"
+      "nginx.org/mergeable-ingress-type" = "master"
     }
   }
 
@@ -68,22 +123,22 @@ resource "kubernetes_ingress_v1" "argocd_master" {
     ingress_class_name = "nginx"
 
     tls {
-      hosts       = ["argo-cd.crazypokemondev.de"]
+      hosts       = [var.argocd_host]
       secret_name = "letsencrypt"
     }
 
     rule {
-      host = "argo-cd.crazypokemondev.de"
+      host = var.argocd_host
     }
   }
 }
 
 resource "kubernetes_ingress_v1" "argocd_minion" {
   metadata {
-    namespace   = kubernetes_namespace.argocd.metadata.0.name
-    name        = "argo-cd-minion"
+    namespace = kubernetes_namespace.argocd.metadata.0.name
+    name      = "argo-cd-minion"
     annotations = {
-      "nginx.org/mergeable-ingress-type"   = "minion"
+      "nginx.org/mergeable-ingress-type" = "minion"
     }
   }
 
@@ -91,7 +146,7 @@ resource "kubernetes_ingress_v1" "argocd_minion" {
     ingress_class_name = "nginx"
 
     rule {
-      host = "argo-cd.crazypokemondev.de"
+      host = var.argocd_host
 
       http {
         path {

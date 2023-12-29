@@ -5,4 +5,5 @@ locals {
   metallb_address_pool = [
     "192.168.20.194/32"
   ]
+  argocd_host = "argo-cd.crazypokemondev.de"
 }
