@@ -100,7 +100,7 @@ kind: ConfigMap
 metadata:
   name: argocd-cm
 data:
-  url: ${var.argocd_url}
+  url: https://${var.argocd_host}
   dex.config: |
     connectors:
       - type: github
