@@ -11,7 +11,7 @@ data:
         name: GitHub
         config:
           clientID: fd43b1e770612fb89f08
-          clientSecret: $dex.github.clientSecret
+          clientSecret: $argocd-dex-secret:dex.github.clientSecret
           orgs:
           - name: DasHeistApartment
             teams:
