@@ -76,14 +76,6 @@ module "argocd_kustomize" {
         }
       ]
 
-      config_map_generator = [{
-        name      = "environment-variables-tf"
-        namespace = kubernetes_namespace.argocd.metadata.0.name
-        literals = [
-          "ARGOCD_URL=https://${var.argocd_host}"
-        ]
-      }]
-
       secret_generator = [{
         name      = "argocd-dex-secret"
         namespace = kubernetes_namespace.argocd.metadata.0.name
@@ -102,7 +94,27 @@ module "argocd_kustomize" {
           path = "${path.module}/argocd/overrides/argocd-cmd-params-cm.yaml"
         },
         {
-          path = "${path.module}/argocd/overrides/argocd-cm.yaml"
+          patch = <<YAML
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cm
+data:
+  url: ${var.argocd_url}
+  dex.config: |
+    connectors:
+      - type: github
+        id: github
+        name: GitHub
+        config:
+          clientID: ${var.argocd_github_app_id}
+          clientSecret: $argocd-dex-secret:dex.github.clientSecret
+          orgs:
+          - name: DasHeistApartment
+            teams:
+            - deployment-admins
+          teamNameField: both
+YAML
         }
       ]
     }
