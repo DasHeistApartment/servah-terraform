@@ -80,10 +80,6 @@ module "argocd_kustomize" {
         }
       }
     }]
-
-    common_labels = {
-      "app.kubernetes.io/part-of" = "argocd"
-    }
   }
 }
 
