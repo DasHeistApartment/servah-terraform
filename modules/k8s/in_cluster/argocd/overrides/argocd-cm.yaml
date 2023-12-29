@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: argocd-cm
 data:
-  url: $(ARGOCD_URL)
+  url: $ARGOCD_URL
   dex.config: |
     connectors:
       - type: github
