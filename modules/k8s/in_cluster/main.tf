@@ -52,7 +52,7 @@ module "argocd_kustomize" {
   version = "0.4.0"
 
   configuration = {
-    apps = {
+    servah-host-workspace = {
       namespace = kubernetes_namespace.argocd.metadata.0.name
 
       resources = [
