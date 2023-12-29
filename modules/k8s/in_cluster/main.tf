@@ -67,7 +67,7 @@ module "argocd_kustomize" {
         name      = "environment-variables-tf"
         namespace = kubernetes_namespace.argocd.metadata.0.name
         literals  = [
-          "ARGOCD_URL=${vars.argocd_url}"
+          "ARGOCD_URL=${var.argocd_url}"
         ]
       }
     ]
@@ -77,7 +77,7 @@ module "argocd_kustomize" {
         name      = "argocd-dex-secret"
         namespace = kubernetes_namespace.argocd.metadata.0.name
         literals  = [
-          "dex.github.clientSecret=${vars.argocd_github_app_secret}"
+          "dex.github.clientSecret=${var.argocd_github_app_secret}"
         ]
         options = {
           labels = {
@@ -103,12 +103,12 @@ resource "kubernetes_ingress_v1" "argocd_master" {
     ingress_class_name = "nginx"
 
     tls {
-      hosts       = ["argo-cd.crazypokemondev.de"]
+      hosts       = [var.argocd_host]
       secret_name = "letsencrypt"
     }
 
     rule {
-      host = "argo-cd.crazypokemondev.de"
+      host = [var.argocd_host]
     }
   }
 }
@@ -126,7 +126,7 @@ resource "kubernetes_ingress_v1" "argocd_minion" {
     ingress_class_name = "nginx"
 
     rule {
-      host = "argo-cd.crazypokemondev.de"
+      host = var.argocd_host
 
       http {
         path {
