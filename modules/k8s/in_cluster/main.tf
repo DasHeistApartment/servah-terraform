@@ -51,6 +51,8 @@ module "argocd_kustomize" {
   source  = "kbst.xyz/catalog/custom-manifests/kustomization"
   version = "0.4.0"
 
+  base_key = "servah-host-workspace"
+
   configuration = {
     servah-host-workspace = {
       namespace = kubernetes_namespace.argocd.metadata.0.name
