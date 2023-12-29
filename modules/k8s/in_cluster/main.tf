@@ -43,10 +43,6 @@ resource "kubernetes_namespace" "argocd" {
   }
 }
 
-data "kustomization_build" "test" {
-  path = "${path.module}/argocd"
-}
-
 module "argocd_kustomize" {
   source  = "kbst.xyz/catalog/custom-manifests/kustomization"
   version = "0.4.0"
