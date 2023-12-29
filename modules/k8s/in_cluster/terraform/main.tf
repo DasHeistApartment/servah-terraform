@@ -25,7 +25,7 @@ resource "kubernetes_secret" "tfc_agent_token" {
   }
 }
 
-resource "kubernetes_service_account" "tfc_agent" {
+resource "kubernetes_service_account_v1" "tfc_agent" {
   depends_on = [kubernetes_namespace.terraform]
 
   metadata {
@@ -35,7 +35,7 @@ resource "kubernetes_service_account" "tfc_agent" {
 }
 
 resource "kubernetes_cluster_role_binding" "tfc_agent" {
-  depends_on = [kubernetes_service_account.tfc_agent]
+  depends_on = [kubernetes_service_account_v1.tfc_agent]
 
   metadata {
     name = "tfc-agent-role-binding"
@@ -47,7 +47,7 @@ resource "kubernetes_cluster_role_binding" "tfc_agent" {
   }
   subject {
     kind      = "ServiceAccount"
-    name      = kubernetes_service_account.tfc_agent.metadata.0.name
+    name      = kubernetes_service_account_v1.tfc_agent.metadata.0.name
     namespace = kubernetes_namespace.terraform.metadata.0.name
   }
 }
@@ -55,7 +55,7 @@ resource "kubernetes_cluster_role_binding" "tfc_agent" {
 resource "kubernetes_deployment" "tfc_agent" {
   wait_for_rollout = false
 
-  depends_on = [kubernetes_service_account.tfc_agent, kubernetes_secret.tfc_agent_token, kubernetes_namespace.terraform]
+  depends_on = [kubernetes_service_account_v1.tfc_agent, kubernetes_secret.tfc_agent_token, kubernetes_namespace.terraform]
 
   metadata {
     namespace = kubernetes_namespace.terraform.metadata.0.name
@@ -84,7 +84,7 @@ resource "kubernetes_deployment" "tfc_agent" {
       }
 
       spec {
-        service_account_name = kubernetes_service_account.tfc_agent.metadata.0.name
+        service_account_name = kubernetes_service_account_v1.tfc_agent.metadata.0.name
 
         container {
           name  = "agent"
