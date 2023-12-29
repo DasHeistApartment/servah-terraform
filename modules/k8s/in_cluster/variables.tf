@@ -10,6 +10,6 @@ variable "metallb_address_pool" {
   type = list(string)
 }
 
-variable "argocd_url" {
+variable "argocd_host" {
   type = string
 }
