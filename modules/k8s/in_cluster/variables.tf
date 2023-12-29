@@ -9,3 +9,7 @@ variable "acme_email" {
 variable "metallb_address_pool" {
   type = list(string)
 }
+
+variable "argocd_url" {
+  type = string
+}
