@@ -47,83 +47,27 @@ resource "kubernetes_namespace" "argocd" {
   }
 }
 
-data "kustomization_overlay" "argocd" {
-  namespace = kubernetes_namespace.argocd.metadata.0.name
-
-  resources = [
-    "https://raw.githubusercontent.com/argoproj/argo-cd/v2.9.3/manifests/install.yaml"
-  ]
-
-  secret_generator {
-    name      = "argocd-dex-secret"
+resource "kubernetes_secret" "argocd-dex" {
+  metadata {
     namespace = kubernetes_namespace.argocd.metadata.0.name
-    literals = [
-      "dex.github.clientSecret=${var.argocd_github_app_secret}"
-    ]
-    options {
-      labels = {
-        "app.kubernetes.io/part-of" = "argocd"
+    name      = "argocd-dex-secret"
+  }
+  data = {
+    dex = {
+      github = {
+        clientSecret = var.argocd_github_app_secret
       }
-      disable_name_suffix_hash = true
     }
   }
-
-  patches {
-    path = "${path.module}/argocd/overrides/argocd-cmd-params-cm.yaml"
-  }
-  patches {
-    patch = <<YAML
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: argocd-cm
-data:
-  url: https://${var.argocd_host}
-  dex.config: |
-    connectors:
-      - type: github
-        id: github
-        name: GitHub
-        config:
-          clientID: ${var.argocd_github_app_id}
-          clientSecret: $argocd-dex-secret:dex.github.clientSecret
-          orgs:
-          - name: DasHeistApartment
-            teams:
-            - deployment-admins
-          teamNameField: both
-YAML
-  }
 }
 
-resource "kustomization_resource" "p0" {
-  for_each = data.kustomization_overlay.argocd.ids_prio[0]
-
-  manifest = (
-    contains(["_/Secret"], regex("(?P<group_kind>.*/.*)/.*/.*", each.value)["group_kind"])
-    ? sensitive(data.kustomization_overlay.argocd.manifests[each.value])
-    : data.kustomization_overlay.argocd.manifests[each.value]
-  )
+data "kubectl_file_documents" "argocd" {
+  content = file("${path.module}/argocd/kustomized.yaml")
 }
 
-resource "kustomization_resource" "p1" {
-  for_each = data.kustomization_overlay.argocd.ids_prio[1]
-
-  manifest = (
-    contains(["_/Secret"], regex("(?P<group_kind>.*/.*)/.*/.*", each.value)["group_kind"])
-    ? sensitive(data.kustomization_overlay.argocd.manifests[each.value])
-    : data.kustomization_overlay.argocd.manifests[each.value]
-  )
-}
-
-resource "kustomization_resource" "p2" {
-  for_each = data.kustomization_overlay.argocd.ids_prio[2]
-
-  manifest = (
-    contains(["_/Secret"], regex("(?P<group_kind>.*/.*)/.*/.*", each.value)["group_kind"])
-    ? sensitive(data.kustomization_overlay.argocd.manifests[each.value])
-    : data.kustomization_overlay.argocd.manifests[each.value]
-  )
+resource "kubectl_manifest" "argocd" {
+    for_each  = data.kubectl_file_documents.argocd.manifests
+    yaml_body = each.value
 }
 
 resource "kubernetes_ingress_v1" "argocd_master" {
