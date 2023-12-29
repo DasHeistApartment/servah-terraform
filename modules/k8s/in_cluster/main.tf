@@ -51,7 +51,7 @@ module "argocd_kustomize" {
   source  = "kbst.xyz/catalog/custom-manifests/kustomization"
   version = "0.4.0"
 
-  base_key = "servah-host-workspace"
+  configuration_base_key = "servah-host-workspace"
 
   configuration = {
     servah-host-workspace = {
