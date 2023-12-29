@@ -62,6 +62,7 @@ module "kubernetes_in_cluster" {
   portforward_config_url = local.portforward_config_url
   acme_email             = local.acme_email
   metallb_address_pool   = local.metallb_address_pool
+  argocd_url             = local.argocd_url
 
   depends_on = [module.proxmox_kubernetes_cluster]
 }
