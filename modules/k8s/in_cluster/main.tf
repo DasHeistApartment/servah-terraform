@@ -67,7 +67,7 @@ module "argocd_kustomize" {
         name      = "environment-variables-tf"
         namespace = kubernetes_namespace.argocd.metadata.0.name
         literals  = [
-          "ARGOCD_URL=${var.argocd_url}"
+          "ARGOCD_URL=https://${var.argocd_host}"
         ]
       }
     ]
@@ -108,7 +108,7 @@ resource "kubernetes_ingress_v1" "argocd_master" {
     }
 
     rule {
-      host = [var.argocd_host]
+      host = var.argocd_host
     }
   }
 }
