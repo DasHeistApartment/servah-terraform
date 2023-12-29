@@ -65,9 +65,10 @@ module "argocd_kustomize" {
         {
           name = "ARGOCD_URL"
           obj_ref = {
-            kind      = "ConfigMap"
-            name      = "environment-variables-tf"
-            namespace = kubernetes_namespace.argocd.metadata.0.name
+            api_version = "v1"
+            kind        = "ConfigMap"
+            name        = "environment-variables-tf"
+            namespace   = kubernetes_namespace.argocd.metadata.0.name
           }
           field_ref = {
             field_path = "data.ARGOCD_URL"
