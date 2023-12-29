@@ -60,8 +60,6 @@ module "argocd_kustomize" {
       ]
     }
 
-    ops = {}
-
     config_map_generator = [{
       name      = "environment-variables-tf"
       namespace = kubernetes_namespace.argocd.metadata.0.name
