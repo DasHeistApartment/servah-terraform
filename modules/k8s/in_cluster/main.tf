@@ -61,7 +61,7 @@ module "argocd_kustomize" {
     config_map_generator = [{
       name      = "environment-variables-tf"
       namespace = kubernetes_namespace.argocd.metadata.0.name
-      literals  = [
+      literals = [
         "ARGOCD_URL=https://${var.argocd_host}"
       ]
     }]
@@ -69,7 +69,7 @@ module "argocd_kustomize" {
     secret_generator = [{
       name      = "argocd-dex-secret"
       namespace = kubernetes_namespace.argocd.metadata.0.name
-      literals  = [
+      literals = [
         "dex.github.clientSecret=${var.argocd_github_app_secret}"
       ]
       options = {
@@ -87,11 +87,11 @@ module "argocd_kustomize" {
 
 resource "kubernetes_ingress_v1" "argocd_master" {
   metadata {
-    namespace   = kubernetes_namespace.argocd.metadata.0.name
-    name        = "argo-cd-master"
+    namespace = kubernetes_namespace.argocd.metadata.0.name
+    name      = "argo-cd-master"
     annotations = {
-      "cert-manager.io/cluster-issuer"               = "letsencrypt"
-      "nginx.org/mergeable-ingress-type"             = "master"
+      "cert-manager.io/cluster-issuer"   = "letsencrypt"
+      "nginx.org/mergeable-ingress-type" = "master"
     }
   }
 
@@ -111,10 +111,10 @@ resource "kubernetes_ingress_v1" "argocd_master" {
 
 resource "kubernetes_ingress_v1" "argocd_minion" {
   metadata {
-    namespace   = kubernetes_namespace.argocd.metadata.0.name
-    name        = "argo-cd-minion"
+    namespace = kubernetes_namespace.argocd.metadata.0.name
+    name      = "argo-cd-minion"
     annotations = {
-      "nginx.org/mergeable-ingress-type"   = "minion"
+      "nginx.org/mergeable-ingress-type" = "minion"
     }
   }
 
