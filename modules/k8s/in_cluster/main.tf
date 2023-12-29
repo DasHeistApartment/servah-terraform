@@ -43,15 +43,54 @@ resource "kubernetes_namespace" "argocd" {
   }
 }
 
-data "kubectl_file_documents" "argocd_manifest_doc" {
-  content = file("${path.module}/argocd_install.yaml")
+data "kustomization_build" "test" {
+  path = "${path.module}/argocd"
 }
 
-resource "kubectl_manifest" "argocd" {
-  for_each  = data.kubectl_file_documents.argocd_manifest_doc.manifests
-  yaml_body = each.value
-  wait      = true
-  override_namespace = kubernetes_namespace.argocd.metadata.0.name
+module "argocd_kustomize" {
+  source  = "kbst.xyz/catalog/custom-manifests/kustomization"
+  version = "0.4.0"
+
+  configuration = {
+    apps = {
+      namespace = kubernetes_namespace.argocd.metadata.0.name
+
+      resources = [
+        "${path.module}/argocd"
+      ]
+
+      common_labels = {
+        "env" = terraform.workspace
+      }
+    }
+
+    ops = {}
+
+    config_map_generator = [
+      {
+        name      = "environment-variables-tf"
+        namespace = kubernetes_namespace.argocd.metadata.0.name
+        literals  = [
+          "ARGOCD_URL=${vars.argocd_url}"
+        ]
+      }
+    ]
+
+    secret_generator = [
+      {
+        name      = "argocd-dex-secret"
+        namespace = kubernetes_namespace.argocd.metadata.0.name
+        literals  = [
+          "dex.github.clientSecret=${vars.argocd_github_app_secret}"
+        ]
+        options = {
+          labels = {
+            "app.kubernetes.io/part-of" = "argocd"
+          }
+        }
+      }
+    ]
+  }
 }
 
 resource "kubernetes_ingress_v1" "argocd_master" {
