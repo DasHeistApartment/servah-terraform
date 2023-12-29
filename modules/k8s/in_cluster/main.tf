@@ -58,30 +58,26 @@ module "argocd_kustomize" {
 
     ops = {}
 
-    config_map_generator = [
-      {
-        name      = "environment-variables-tf"
-        namespace = kubernetes_namespace.argocd.metadata.0.name
-        literals  = [
-          "ARGOCD_URL=https://${var.argocd_host}"
-        ]
-      }
-    ]
+    config_map_generator = [{
+      name      = "environment-variables-tf"
+      namespace = kubernetes_namespace.argocd.metadata.0.name
+      literals  = [
+        "ARGOCD_URL=https://${var.argocd_host}"
+      ]
+    }]
 
-    secret_generator = [
-      {
-        name      = "argocd-dex-secret"
-        namespace = kubernetes_namespace.argocd.metadata.0.name
-        literals  = [
-          "dex.github.clientSecret=${var.argocd_github_app_secret}"
-        ]
-        options = {
-          labels = {
-            "app.kubernetes.io/part-of" = "argocd"
-          }
+    secret_generator = [{
+      name      = "argocd-dex-secret"
+      namespace = kubernetes_namespace.argocd.metadata.0.name
+      literals  = [
+        "dex.github.clientSecret=${var.argocd_github_app_secret}"
+      ]
+      options = {
+        labels = {
+          "app.kubernetes.io/part-of" = "argocd"
         }
       }
-    ]
+    }]
 
     common_labels = {
       "app.kubernetes.io/part-of" = "argocd"
