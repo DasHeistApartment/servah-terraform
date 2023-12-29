@@ -97,6 +97,8 @@ YAML
 }
 
 resource "kustomization_resource" "argocd" {
+  depends_on = [kubernetes_namespace.argocd]
+
   for_each = data.kustomization_overlay.argocd.ids
 
   manifest = (
