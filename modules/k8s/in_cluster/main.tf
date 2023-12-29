@@ -96,13 +96,33 @@ YAML
   }
 }
 
-resource "kustomization_resource" "argocd" {
-  count = length(data.kustomization_overlay.argocd.manifests)
+resource "kustomization_resource" "p0" {
+  for_each = data.kustomization_overlay.argocd.ids_prio[0]
 
   manifest = (
-    contains(["_/Secret"], regex("(?P<group_kind>.*/.*)/.*/.*", count.index)["group_kind"])
-    ? sensitive(data.kustomization_overlay.argocd.manifests[count.index])
-    : data.kustomization_overlay.argocd.manifests[count.index]
+    contains(["_/Secret"], regex("(?P<group_kind>.*/.*)/.*/.*", each.value)["group_kind"])
+    ? sensitive(data.kustomization_overlay.argocd.manifests[each.value])
+    : data.kustomization_overlay.argocd.manifests[each.value]
+  )
+}
+
+resource "kustomization_resource" "p1" {
+  for_each = data.kustomization_overlay.argocd.ids_prio[1]
+
+  manifest = (
+    contains(["_/Secret"], regex("(?P<group_kind>.*/.*)/.*/.*", each.value)["group_kind"])
+    ? sensitive(data.kustomization_overlay.argocd.manifests[each.value])
+    : data.kustomization_overlay.argocd.manifests[each.value]
+  )
+}
+
+resource "kustomization_resource" "p2" {
+  for_each = data.kustomization_overlay.argocd.ids_prio[2]
+
+  manifest = (
+    contains(["_/Secret"], regex("(?P<group_kind>.*/.*)/.*/.*", each.value)["group_kind"])
+    ? sensitive(data.kustomization_overlay.argocd.manifests[each.value])
+    : data.kustomization_overlay.argocd.manifests[each.value]
   )
 }
 
