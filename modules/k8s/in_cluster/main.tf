@@ -97,12 +97,12 @@ YAML
 }
 
 resource "kustomization_resource" "argocd" {
-  for_each = data.kustomization_overlay.argocd.ids
+  count = length(data.kustomization_overlay.argocd.manifests)
 
   manifest = (
-    contains(["_/Secret"], regex("(?P<group_kind>.*/.*)/.*/.*", each.value)["group_kind"])
-    ? sensitive(data.kustomization_overlay.argocd.manifests[each.value])
-    : data.kustomization_overlay.argocd.manifests[each.value]
+    contains(["_/Secret"], regex("(?P<group_kind>.*/.*)/.*/.*", count.index)["group_kind"])
+    ? sensitive(data.kustomization_overlay.argocd.manifests[count.index])
+    : data.kustomization_overlay.argocd.manifests[count.index]
   )
 }
 
