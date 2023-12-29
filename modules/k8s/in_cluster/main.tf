@@ -58,12 +58,26 @@ module "argocd_kustomize" {
       namespace = kubernetes_namespace.argocd.metadata.0.name
 
       resources = [
-        "${path.module}/argocd"
+        "https://raw.githubusercontent.com/argoproj/argo-cd/v2.9.3/manifests/install.yaml"
+      ]
+
+      vars = [
+        {
+          name = "ARGOCD_URL"
+          obj_ref = {
+            kind      = "ConfigMap"
+            name      = "environment-variables-tf"
+            namespace = kubernetes_namespace.argocd.metadata.0.name
+          }
+          field_ref = {
+            field_path = "data.ARGOCD_URL"
+          }
+        }
       ]
 
       config_map_generator = [{
         name      = "environment-variables-tf"
-        namespace = "${kubernetes_namespace.argocd.metadata.0.name}"
+        namespace = kubernetes_namespace.argocd.metadata.0.name
         literals = [
           "ARGOCD_URL=https://${var.argocd_host}"
         ]
@@ -71,7 +85,7 @@ module "argocd_kustomize" {
 
       secret_generator = [{
         name      = "argocd-dex-secret"
-        namespace = "${kubernetes_namespace.argocd.metadata.0.name}"
+        namespace = kubernetes_namespace.argocd.metadata.0.name
         literals = [
           "dex.github.clientSecret=${var.argocd_github_app_secret}"
         ]
@@ -81,6 +95,15 @@ module "argocd_kustomize" {
           }
         }
       }]
+
+      patches = [
+        {
+          path = "${path.module}/argocd/overrides/argocd-cmd-parameters-cm.yaml"
+        }
+        {
+          path = "${path.module}/argocd/overrides/argocd-cm.yaml"
+        }
+      ]
     }
   }
 }
