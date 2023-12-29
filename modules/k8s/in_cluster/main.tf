@@ -81,7 +81,7 @@ module "argocd_kustomize" {
         ]
         options = {
           labels = {
-            "app.kubernetes.io/part-of" = "argocd"
+            app.kubernetes.io/part-of = "argocd"
           }
         }
       }
