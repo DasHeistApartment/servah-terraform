@@ -96,16 +96,12 @@ YAML
   }
 }
 
-resource "kustomization_resource" "argocd" {
+resource "kubectl_manifest" "argocd" {
   depends_on = [kubernetes_namespace.argocd]
 
   for_each = data.kustomization_overlay.argocd.ids
 
-  manifest = (
-    contains(["_/Secret"], regex("(?P<group_kind>.*/.*)/.*/.*", each.value)["group_kind"])
-    ? sensitive(data.kustomization_overlay.argocd.manifests[each.value])
-    : data.kustomization_overlay.argocd.manifests[each.value]
-  )
+  yaml_body = yamlencode(jsondecode(data.kustomization_overlay.argocd.manifests[each.value]))
 }
 
 resource "kubernetes_ingress_v1" "argocd_master" {
