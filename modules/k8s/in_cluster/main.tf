@@ -61,21 +61,6 @@ module "argocd_kustomize" {
         "https://raw.githubusercontent.com/argoproj/argo-cd/v2.9.3/manifests/install.yaml"
       ]
 
-      vars = [
-        {
-          name = "ARGOCD_URL"
-          obj_ref = {
-            api_version = "v1"
-            kind        = "ConfigMap"
-            name        = "environment-variables-tf"
-            namespace   = kubernetes_namespace.argocd.metadata.0.name
-          }
-          field_ref = {
-            field_path = "data.ARGOCD_URL"
-          }
-        }
-      ]
-
       secret_generator = [{
         name      = "argocd-dex-secret"
         namespace = kubernetes_namespace.argocd.metadata.0.name
