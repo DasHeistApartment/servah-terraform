@@ -60,6 +60,7 @@ resource "kubernetes_secret" "argocd-dex" {
 resource "kubectl_manifest" "argocd" {
     for_each  = fileset("${path.module}/argocd/build", "*.yaml")
     yaml_body = file("${path.module}/argocd/build/${each.value}")
+    override_namespace = kubernetes_namespace.argocd.metadata.0.name
 }
 
 resource "kubernetes_ingress_v1" "argocd_master" {
