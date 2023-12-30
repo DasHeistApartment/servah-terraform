@@ -175,6 +175,10 @@ resource "kubernetes_deployment" "portforward" {
             name  = "WEBSERVER_PORT"
             value = 80
           }
+          env {
+            name  = "WEBSERVER_HOST"
+            value = "home.crazypokemondev.de"
+          }
           port {
             container_port = 80
             name           = "http"
