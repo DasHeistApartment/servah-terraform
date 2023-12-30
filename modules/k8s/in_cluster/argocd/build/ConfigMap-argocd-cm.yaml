@@ -1,0 +1,23 @@
+---
+apiVersion: v1
+data:
+  dex.config: |
+    connectors:
+      - type: github
+        id: github
+        name: GitHub
+        config:
+          clientID: fd43b1e770612fb89f08
+          clientSecret: $argocd-dex-secret:dex.github.clientSecret
+          orgs:
+          - name: DasHeistApartment
+            teams:
+            - deployment-admins
+          teamNameField: both
+  url: https://argo-cd.crazypokemondev.de
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/name: argocd-cm
+    app.kubernetes.io/part-of: argocd
+  name: argocd-cm

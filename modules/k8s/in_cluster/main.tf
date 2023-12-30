@@ -57,13 +57,9 @@ resource "kubernetes_secret" "argocd-dex" {
   }
 }
 
-data "kubectl_file_documents" "argocd" {
-  content = file("${path.module}/argocd/kustomized.yaml")
-}
-
 resource "kubectl_manifest" "argocd" {
-    for_each  = data.kubectl_file_documents.argocd.manifests
-    yaml_body = each.value
+    for_each  = fileset("${path.module}/argocd/build", "*.yaml")
+    yaml_body = file("${path.module}/argocd/build/${each.value}")
 }
 
 resource "kubernetes_ingress_v1" "argocd_master" {
