@@ -171,6 +171,10 @@ resource "kubernetes_deployment" "portforward" {
             name  = "CONFIG_URL"
             value = var.portforward_config_url
           }
+          env {
+            name  = "WEBSERVER_PORT"
+            value = 80
+          }
           port {
             container_port = 80
             name           = "http"
