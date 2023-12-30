@@ -51,6 +51,10 @@ resource "kubernetes_secret" "argocd-dex" {
   metadata {
     namespace = kubernetes_namespace.argocd.metadata.0.name
     name      = "argocd-dex-secret"
+
+    labels = {
+      "app.kubernetes.io/part-of" = "argocd"
+    }
   }
   data = {
     "dex.github.clientSecret" = var.argocd_github_app_secret
