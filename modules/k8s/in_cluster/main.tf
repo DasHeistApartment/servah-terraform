@@ -58,7 +58,7 @@ resource "kubernetes_secret" "argocd-dex" {
 }
 
 resource "kubectl_manifest" "argocd" {
-    for_each  = fileset("${path.module}/argocd/build/*.yaml")
+    for_each  = fileset("${path.module}/argocd/build", "*.yaml")
     yaml_body = file(each.value)
 }
 
