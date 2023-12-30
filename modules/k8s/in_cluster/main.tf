@@ -12,10 +12,6 @@ terraform {
       source  = "alekc/kubectl"
       version = ">= 2.0.0"
     }
-    kustomization = {
-      source  = "kbst/kustomization"
-      version = "0.9.0"
-    }
   }
 }
 
