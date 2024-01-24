@@ -1,7 +1,7 @@
 ---
 apiVersion: v1
 data:
-  admin.enabled: false
+  admin.enabled: "false"
   dex.config: |
     connectors:
       - type: github
