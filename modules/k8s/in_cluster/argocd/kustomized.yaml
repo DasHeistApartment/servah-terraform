@@ -20750,6 +20750,11 @@ metadata:
   name: argocd-notifications-cm
 ---
 apiVersion: v1
+data:
+  policy.csv: |
+    g, DasHeistApartment:deployment-admins, role:admin
+  policy.default: role:readonly
+  scopes: '[groups, email]'
 kind: ConfigMap
 metadata:
   labels:

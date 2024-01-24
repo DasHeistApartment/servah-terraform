@@ -4,3 +4,4 @@ resources:
 patches:
 - path: "overrides/argocd-cm.yaml"
 - path: "overrides/argocd-cmd-params-cm.yaml"
+- path: "overrides/argocd-rbac-cm.yaml"
