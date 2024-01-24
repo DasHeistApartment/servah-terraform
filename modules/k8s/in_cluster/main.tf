@@ -166,7 +166,7 @@ spec:
     directory:
       recurse: true
   sources: []
-  project: wwdeatch
+  project: ${kubectl_manifest.wwdeatch.name}
   syncPolicy:
     automated:
       prune: true
