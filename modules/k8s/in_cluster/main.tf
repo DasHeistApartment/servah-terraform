@@ -58,9 +58,9 @@ resource "kubernetes_secret" "argocd-dex" {
 }
 
 resource "kubectl_manifest" "argocd" {
-    for_each  = fileset("${path.module}/argocd/build", "*.yaml")
-    yaml_body = file("${path.module}/argocd/build/${each.value}")
-    override_namespace = kubernetes_namespace.argocd.metadata.0.name
+  for_each           = fileset("${path.module}/argocd/build", "*.yaml")
+  yaml_body          = file("${path.module}/argocd/build/${each.value}")
+  override_namespace = kubernetes_namespace.argocd.metadata.0.name
 }
 
 resource "kubernetes_ingress_v1" "argocd_master" {
@@ -118,4 +118,59 @@ resource "kubernetes_ingress_v1" "argocd_minion" {
       }
     }
   }
+}
+
+resource "kubernetes_namespace" "wwdeatch" {
+  metadata {
+    name = "wwdeatch"
+  }
+}
+
+resource "kubectl_manifest" "wwdeatch" {
+  depends_on         = [kubectl_manifest.argocd]
+  yaml_body          = <<EOF
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: wwdeatch
+spec:
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  destinations:
+  - namespace: '${kubernetes_namespace.wwdeatch.metadata.0.name}'
+    server: '*'
+  sourceRepos:
+  - '*'
+EOF
+  override_namespace = kubernetes_namespace.argocd.metadata.0.name
+}
+
+resource "kubectl_manifest" "wwvote" {
+  depends_on         = [kubectl_manifest.argocd, kubectl_manifest.wwdeatch]
+  yaml_body          = <<EOF
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: wwvote
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: ${kubernetes_namespace.wwdeatch.metadata.0.name}
+    server: https://kubernetes.default.svc
+  source:
+    path: DeAtChVoteBot/Resources
+    repoURL: 'https://github.com/Olfi01/DeAtChVoteBot'
+    targetRevision: HEAD
+    directory:
+      recurse: true
+  sources: []
+  project: wwdeatch
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+  EOF
+  override_namespace = kubernetes_namespace.argocd.metadata.0.name
 }
