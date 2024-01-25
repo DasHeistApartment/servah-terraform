@@ -14,6 +14,10 @@ variable "argocd_host" {
   type = string
 }
 
+variable "argocd_host_grpc" {
+  type = string
+}
+
 variable "argocd_github_app_id" {
   type = string
 }
