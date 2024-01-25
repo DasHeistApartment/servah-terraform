@@ -139,7 +139,7 @@ spec:
     kind: '*'
   destinations:
   - namespace: '${kubernetes_namespace.wwdeatch.metadata.0.name}'
-    server: '*'
+    name: 'in-cluster'
   sourceRepos:
   - '*'
 EOF
