@@ -120,63 +120,6 @@ resource "kubernetes_ingress_v1" "argocd_minion" {
   }
 }
 
-resource "kubernetes_ingress_v1" "argocd_master_grpc" {
-  metadata {
-    namespace = kubernetes_namespace.argocd.metadata.0.name
-    name      = "argo-cd-master-grpc"
-    annotations = {
-      "cert-manager.io/cluster-issuer"   = "letsencrypt"
-      "nginx.org/mergeable-ingress-type" = "master"
-    }
-  }
-
-  spec {
-    ingress_class_name = "nginx"
-
-    tls {
-      hosts       = [var.argocd_host_grpc]
-      secret_name = "letsencrypt-grpc"
-    }
-
-    rule {
-      host = var.argocd_host_grpc
-    }
-  }
-}
-
-resource "kubernetes_ingress_v1" "argocd_minion_grpc" {
-  metadata {
-    namespace = kubernetes_namespace.argocd.metadata.0.name
-    name      = "argo-cd-minion-grpc"
-    annotations = {
-      "nginx.org/mergeable-ingress-type" = "minion"
-    }
-  }
-
-  spec {
-    ingress_class_name = "nginx"
-
-    rule {
-      host = var.argocd_host_grpc
-
-      http {
-        path {
-          path      = "/"
-          path_type = "Prefix"
-          backend {
-            service {
-              name = "argocd-server"
-              port {
-                name = "https"
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
 resource "kubernetes_namespace" "wwdeatch" {
   metadata {
     name = "wwdeatch"
