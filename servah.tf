@@ -63,7 +63,6 @@ module "kubernetes_in_cluster" {
   acme_email               = local.acme_email
   metallb_address_pool     = local.metallb_address_pool
   argocd_host              = local.argocd_host
-  argocd_host_grpc         = local.argocd_host_grpc
   argocd_github_app_id     = local.argocd_github_app_id
   argocd_github_app_secret = var.argocd_github_app_secret
 
