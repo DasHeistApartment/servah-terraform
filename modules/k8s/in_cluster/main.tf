@@ -158,7 +158,7 @@ metadata:
 spec:
   destination:
     namespace: ${kubernetes_namespace.wwdeatch.metadata.0.name}
-    server: https://kubernetes.default.svc
+    name: in-cluster
   source:
     path: DeAtChVoteBot/Resources
     repoURL: 'https://github.com/Olfi01/DeAtChVoteBot'
