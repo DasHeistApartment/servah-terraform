@@ -163,8 +163,6 @@ spec:
     path: DeAtChVoteBot/Resources
     repoURL: 'https://github.com/Olfi01/DeAtChVoteBot'
     targetRevision: HEAD
-    directory:
-      recurse: true
   sources: []
   project: ${kubectl_manifest.wwdeatch.name}
   syncPolicy:
