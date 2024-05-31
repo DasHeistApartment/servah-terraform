@@ -140,3 +140,39 @@ spec:
       duration: "35m"
 YAML
 }
+
+resource "kubectl_manifest" "crazypokemondev_runner_deployment" {
+  depends_on = [helm_release.actions_runner_controller]
+  yaml_body  = <<YAML
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: RunnerDeployment
+metadata:
+  name: crazypokemondev-runner
+spec:
+  template:
+    spec:
+      organization: CrazyPokemonDev
+      labels:
+        - intranet
+YAML
+}
+
+resource "kubectl_manifest" "crazypokemondev_runner_autoscaler" {
+  depends_on = [helm_release.actions_runner_controller]
+  yaml_body  = <<YAML
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: HorizontalRunnerAutoscaler
+metadata:
+  name: crazypokemondev-runners
+spec:
+  minReplicas: 1
+  maxReplicas: 5
+  scaleTargetRef:
+    kind: RunnerDeployment
+    name: crazypokemondev-runner
+  scaleUpTriggers:
+    - githubEvent:
+        workflowJob: {}
+      duration: "35m"
+YAML
+}
