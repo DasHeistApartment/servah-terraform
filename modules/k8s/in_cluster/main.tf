@@ -173,3 +173,50 @@ spec:
   EOF
   override_namespace = kubernetes_namespace.argocd.metadata.0.name
 }
+
+resource "kubectl_manifest" "gitops_project" {
+  depends_on         = [kubectl_manifest.argocd]
+  yaml_body          = <<EOF
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: gitops
+spec:
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  destinations:
+  - namespace: '*'
+    name: 'in-cluster'
+  sourceRepos:
+  - '*'
+EOF
+  override_namespace = kubernetes_namespace.argocd.metadata.0.name
+}
+
+resource "kubectl_manifest" "gitops_root_app" {
+  depends_on         = [kubectl_manifest.argocd, kubectl_manifest.wwdeatch]
+  yaml_body          = <<EOF
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gitops-root
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: ${kubernetes_namespace.argocd.metadata.0.name}
+    name: in-cluster
+  source:
+    path: root
+    repoURL: 'https://github.com/DasHeistApartment/servah-gitops'
+    targetRevision: HEAD
+  sources: []
+  project: ${kubectl_manifest.gitops_project.name}
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+  EOF
+  override_namespace = kubernetes_namespace.argocd.metadata.0.name
+}
