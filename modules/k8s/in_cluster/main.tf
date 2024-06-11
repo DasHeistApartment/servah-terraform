@@ -121,59 +121,6 @@ resource "kubernetes_ingress_v1" "argocd_minion" {
   }
 }
 
-resource "kubernetes_namespace" "wwdeatch" {
-  metadata {
-    name = "wwdeatch"
-  }
-}
-
-resource "kubectl_manifest" "wwdeatch" {
-  depends_on         = [kubectl_manifest.argocd]
-  yaml_body          = <<EOF
-apiVersion: argoproj.io/v1alpha1
-kind: AppProject
-metadata:
-  name: wwdeatch
-spec:
-  clusterResourceWhitelist:
-  - group: '*'
-    kind: '*'
-  destinations:
-  - namespace: '${kubernetes_namespace.wwdeatch.metadata.0.name}'
-    name: 'in-cluster'
-  sourceRepos:
-  - '*'
-EOF
-  override_namespace = kubernetes_namespace.argocd.metadata.0.name
-}
-
-resource "kubectl_manifest" "wwvote" {
-  depends_on         = [kubectl_manifest.argocd, kubectl_manifest.wwdeatch]
-  yaml_body          = <<EOF
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: wwvote
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
-spec:
-  destination:
-    namespace: ${kubernetes_namespace.wwdeatch.metadata.0.name}
-    name: in-cluster
-  source:
-    path: DeAtChVoteBot/Resources
-    repoURL: 'https://github.com/Olfi01/DeAtChVoteBot'
-    targetRevision: HEAD
-  sources: []
-  project: ${kubectl_manifest.wwdeatch.name}
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-  EOF
-  override_namespace = kubernetes_namespace.argocd.metadata.0.name
-}
-
 resource "kubectl_manifest" "gitops_project" {
   depends_on         = [kubectl_manifest.argocd]
   yaml_body          = <<EOF
