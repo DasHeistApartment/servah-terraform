@@ -162,4 +162,5 @@ spec:
       selfHeal: true
   EOF
   override_namespace = kubernetes_namespace.argocd.metadata.0.name
+  ignore_fields      = ["status"]
 }
