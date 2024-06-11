@@ -55,9 +55,7 @@ module "proxmox_kubernetes_cluster" {
 }
 
 module "kubernetes_in_cluster" {
-  source = "./modules/k8s/in_cluster"
-
-  github_pat_arc           = var.github_pat_arc
+  source                   = "./modules/k8s/in_cluster"
   portforward_config_url   = local.portforward_config_url
   acme_email               = local.acme_email
   metallb_address_pool     = local.metallb_address_pool

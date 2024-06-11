@@ -25,12 +25,6 @@ module "networking" {
 
 # note: check out https://github.com/JamesLaverack/holepunch for automatic port forwardings
 
-module "github_actions" {
-  source = "./github_actions"
-
-  github_pat_arc = var.github_pat_arc
-}
-
 resource "kubernetes_namespace" "argocd" {
   metadata {
     name = "argocd"
