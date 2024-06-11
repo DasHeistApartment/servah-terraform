@@ -208,6 +208,8 @@ spec:
     namespace: ${kubernetes_namespace.argocd.metadata.0.name}
     name: in-cluster
   source:
+    directory:
+      recurse: true
     path: root
     repoURL: 'https://github.com/DasHeistApartment/servah-gitops'
     targetRevision: HEAD
