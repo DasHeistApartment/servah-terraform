@@ -57,7 +57,6 @@ module "proxmox_kubernetes_cluster" {
 module "kubernetes_in_cluster" {
   source = "./modules/k8s/in_cluster"
 
-  tfc_agent_token          = var.tfc_agent_token
   github_pat_arc           = var.github_pat_arc
   portforward_config_url   = local.portforward_config_url
   acme_email               = local.acme_email

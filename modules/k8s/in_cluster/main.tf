@@ -25,12 +25,6 @@ module "networking" {
 
 # note: check out https://github.com/JamesLaverack/holepunch for automatic port forwardings
 
-module "kubernetes_terraform" {
-  source = "./terraform"
-
-  tfc_agent_token = var.tfc_agent_token
-}
-
 module "github_actions" {
   source = "./github_actions"
 
