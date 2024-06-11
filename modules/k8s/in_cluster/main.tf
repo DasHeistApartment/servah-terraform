@@ -142,7 +142,7 @@ EOF
 }
 
 resource "kubectl_manifest" "gitops_root_app" {
-  depends_on         = [kubectl_manifest.argocd, kubectl_manifest.wwdeatch]
+  depends_on         = [kubectl_manifest.argocd, kubectl_manifest.gitops_project]
   yaml_body          = <<EOF
 apiVersion: argoproj.io/v1alpha1
 kind: Application
