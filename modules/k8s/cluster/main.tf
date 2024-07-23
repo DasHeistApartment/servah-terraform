@@ -29,8 +29,9 @@ resource "proxmox_vm_qemu" "k8s_controller" {
   }
 
   network {
-    model  = "virtio"
-    bridge = "vmbr0"
+    model   = "virtio"
+    bridge  = "vmbr0"
+    macaddr = var.controller_mac
   }
 }
 
@@ -58,6 +59,7 @@ resource "proxmox_vm_qemu" "k8s_node_0" {
   network {
     model  = "virtio"
     bridge = "vmbr0"
+    macaddr = var.node_0_mac
   }
 
   provisioner "local-exec" {

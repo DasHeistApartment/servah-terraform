@@ -47,11 +47,14 @@ provider "proxmox" {
 #}
 
 provider "kubectl" {
-  load_config_file = false
+  load_config_file = false # set this to true if using the local, not in-cluster agent
 }
 
 module "proxmox_kubernetes_cluster" {
   source = "./modules/k8s/cluster"
+
+  node_0_mac = local.node_0_mac
+  controller_mac = local.controller_mac
 }
 
 module "kubernetes_in_cluster" {
