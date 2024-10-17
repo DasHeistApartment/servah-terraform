@@ -47,7 +47,7 @@ resource "proxmox_vm_qemu" "k8s_node_0" {
   qemu_os     = "other"
 
   cores  = 4
-  memory = 12288
+  memory = 32768
 
   disk {
     type    = "scsi"
@@ -56,9 +56,16 @@ resource "proxmox_vm_qemu" "k8s_node_0" {
     ssd     = 1
   }
 
+  disk {
+    type    = "scsi"
+    storage = "Kingston2TBNVMe1"
+    size    = "128G"
+    ssd     = 1
+  }
+
   network {
-    model  = "virtio"
-    bridge = "vmbr0"
+    model   = "virtio"
+    bridge  = "vmbr0"
     macaddr = var.node_0_mac
   }
 
