@@ -11,8 +11,8 @@ terraform {
 terraform {
   required_providers {
     proxmox = {
-      source  = "Telmate/proxmox"
-      version = "2.9.14"
+      source  = "TheGameProfi/proxmox"
+      version = "2.10.0"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
@@ -53,7 +53,7 @@ provider "kubectl" {
 module "proxmox_kubernetes_cluster" {
   source = "./modules/k8s/cluster"
 
-  node_0_mac = local.node_0_mac
+  node_0_mac     = local.node_0_mac
   controller_mac = local.controller_mac
 }
 
