@@ -1,8 +1,8 @@
 terraform {
   required_providers {
     proxmox = {
-      source  = "Telmate/proxmox"
-      version = "2.9.14"
+      source  = "TheGameProfi/proxmox"
+      version = "2.10.0"
     }
   }
 }
@@ -12,7 +12,7 @@ resource "proxmox_vm_qemu" "k8s_controller" {
   target_node = "servah"
   desc        = "The controller of the K8s cluster. Needs to be a VM because K8s requires several kernel details."
   onboot      = true
-  oncreate    = true
+  vm_state    = "running"
   tablet      = false
   iso         = "local:iso/k8s-controller-template.iso" # stored in OneDrive, in case Proxmox server experiences data loss
   bios        = "seabios"
@@ -21,11 +21,17 @@ resource "proxmox_vm_qemu" "k8s_controller" {
   cores  = 2
   memory = 2048
 
-  disk {
-    type    = "scsi"
-    storage = "Kingston500GBNVMe1"
-    size    = "8G"
-    ssd     = 1
+  disks {
+    scsi {
+      scsi0 {
+        disk {
+          storage    = "Kingston500GBNVMe1"
+          size       = 8
+          emulatessd = true
+          replicate  = true
+        }
+      }
+    }
   }
 
   network {
@@ -40,25 +46,38 @@ resource "proxmox_vm_qemu" "k8s_node_0" {
   target_node = "servah"
   desc        = "The first node of the K8s cluster. Needs to be a VM because K8s requires several kernel details."
   onboot      = true
-  oncreate    = true
+  vm_state    = "running"
   tablet      = false
   iso         = "local:iso/k8s-node-template.iso" # stored in OneDrive, in case Proxmox server experiences data loss
   bios        = "seabios"
   qemu_os     = "other"
 
   cores  = 4
-  memory = 12288
+  memory = 32768
 
-  disk {
-    type    = "scsi"
-    storage = "Kingston500GBNVMe1"
-    size    = "128G"
-    ssd     = 1
+  disks {
+    scsi {
+      scsi0 {
+        disk {
+          storage    = "Kingston500GBNVMe1"
+          size       = 128
+          emulatessd = true
+          replicate  = true
+        }
+      }
+      scsi1 {
+        disk {
+          storage    = "Kingston2TBNVMe1"
+          size       = 128
+          emulatessd = true
+        }
+      }
+    }
   }
 
   network {
-    model  = "virtio"
-    bridge = "vmbr0"
+    model   = "virtio"
+    bridge  = "vmbr0"
     macaddr = var.node_0_mac
   }
 
