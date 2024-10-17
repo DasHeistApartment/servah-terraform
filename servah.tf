@@ -46,9 +46,9 @@ provider "proxmox" {
 # Will use the same kubernetes config as the kubernetes provider
 #}
 
-provider "kubectl" {
-  load_config_file = false # set this to true if using the local, not in-cluster agent
-}
+#provider "kubectl" {
+#  load_config_file = false # set by environment variable on runner
+#}
 
 module "proxmox_kubernetes_cluster" {
   source = "./modules/k8s/cluster"
