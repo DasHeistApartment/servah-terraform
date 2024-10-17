@@ -52,7 +52,7 @@ resource "proxmox_vm_qemu" "k8s_node_0" {
   bios        = "seabios"
   qemu_os     = "other"
 
-  cores  = 4
+  cores  = 8
   memory = 32768
 
   disks {
