@@ -1,8 +1,8 @@
 terraform {
   required_providers {
     proxmox = {
-      source  = "TheGameProfi/proxmox"
-      version = "2.10.0"
+      source  = "Telmate/proxmox"
+      version = "3.0.1-rc6"
     }
   }
 }
@@ -14,7 +14,6 @@ resource "proxmox_vm_qemu" "k8s_controller" {
   onboot      = true
   vm_state    = "running"
   tablet      = false
-  iso         = "local:iso/k8s-controller-template.iso" # stored in OneDrive, in case Proxmox server experiences data loss
   bios        = "seabios"
   qemu_os     = "other"
 
@@ -22,6 +21,13 @@ resource "proxmox_vm_qemu" "k8s_controller" {
   memory = 2048
 
   disks {
+    ide {
+      ide2 {
+        cdrom {
+          iso = "local:iso/k8s-controller-template.iso" # stored in OneDrive, in case Proxmox server experiences data loss
+        }
+      }
+    }
     scsi {
       scsi0 {
         disk {
@@ -35,6 +41,7 @@ resource "proxmox_vm_qemu" "k8s_controller" {
   }
 
   network {
+    id      = 0
     model   = "virtio"
     bridge  = "vmbr0"
     macaddr = var.controller_mac
@@ -48,7 +55,6 @@ resource "proxmox_vm_qemu" "k8s_node_0" {
   onboot      = true
   vm_state    = "running"
   tablet      = false
-  iso         = "local:iso/k8s-node-template.iso" # stored in OneDrive, in case Proxmox server experiences data loss
   bios        = "seabios"
   qemu_os     = "other"
 
@@ -56,6 +62,13 @@ resource "proxmox_vm_qemu" "k8s_node_0" {
   memory = 32768
 
   disks {
+    ide {
+      ide2 {
+        cdrom {
+          iso = "local:iso/k8s-node-template.iso" # stored in OneDrive, in case Proxmox server experiences data loss
+        }
+      }
+    }
     scsi {
       scsi0 {
         disk {
@@ -76,6 +89,7 @@ resource "proxmox_vm_qemu" "k8s_node_0" {
   }
 
   network {
+    id      = 0
     model   = "virtio"
     bridge  = "vmbr0"
     macaddr = var.node_0_mac
