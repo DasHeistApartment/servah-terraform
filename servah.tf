@@ -11,8 +11,8 @@ terraform {
 terraform {
   required_providers {
     proxmox = {
-      source  = "TheGameProfi/proxmox"
-      version = "2.10.0"
+      source  = "Telmate/proxmox"
+      version = "3.0.1-rc6"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
@@ -30,7 +30,7 @@ terraform {
 }
 
 provider "proxmox" {
-  pm_api_url          = "https://servah-host:8006/api2/json"
+  pm_api_url          = "https://servah-host.fritz.box:8006/api2/json"
   pm_api_token_id     = var.proxmox_token_id
   pm_api_token_secret = var.proxmox_token_secret
 }
