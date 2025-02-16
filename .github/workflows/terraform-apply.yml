@@ -6,6 +6,10 @@ on:
       environment:
         type: string
         description: The environment for which to run the plan
+      use-public-runner:
+        type: boolean
+        description: Whether to use public github runners
+        default: false
   workflow_dispatch:
     inputs:
       environment:
@@ -14,6 +18,10 @@ on:
         options:
           - general
           - kubernetes
+      use-public-runner:
+        type: boolean
+        description: Whether to use public github runners
+        default: false
 
 env:
   TF_CLOUD_ORGANIZATION: "das-heist-apartment"
@@ -24,7 +32,7 @@ env:
 jobs:
   terraform:
     name: "Terraform Apply"
-    runs-on: [self-hosted]
+    runs-on: ["${{ inputs.use-public-runner && 'ubuntu-latest' || 'self-hosted' }}"]
     permissions:
       contents: read
     steps:

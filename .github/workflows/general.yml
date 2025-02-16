@@ -18,6 +18,7 @@ jobs:
     uses: ./.github/workflows/terraform-plan.yml
     with:
       environment: general
+      use-public-runner: true
     permissions:
       contents: read
       pull-requests: write
@@ -27,6 +28,7 @@ jobs:
     uses: ./.github/workflows/terraform-apply.yml
     with:
       environment: general
+      use-public-runner: true
     permissions:
       contents: read
     secrets: inherit
