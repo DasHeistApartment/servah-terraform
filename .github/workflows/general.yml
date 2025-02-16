@@ -1,0 +1,25 @@
+name: Terraform Plan/Apply (general)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'general/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'general/**'
+
+jobs:
+  plan:
+    if: ${{ github.event_name == 'pull_request' }}
+    uses: ./.github/workflows/terraform-plan.yml
+    with:
+      environment: general
+  apply:
+    if: ${{ github.event_name == 'push' }}
+    uses: ./.github/workflows/terraform-apply.yml
+    with:
+      environment: general
