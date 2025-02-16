@@ -1,10 +1,24 @@
 terraform {
+  cloud {
+    organization = "das-heist-apartment"
+
+    workspaces {
+      name = "servah-host-general"
+    }
+  }
+
   required_providers {
     proxmox = {
       source  = "Telmate/proxmox"
       version = "3.0.1-rc6"
     }
   }
+}
+
+provider "proxmox" {
+  pm_api_url          = "https://servah-host.fritz.box:8006/api2/json"
+  pm_api_token_id     = var.proxmox_token_id
+  pm_api_token_secret = var.proxmox_token_secret
 }
 
 resource "proxmox_vm_qemu" "k8s_controller" {
@@ -44,7 +58,7 @@ resource "proxmox_vm_qemu" "k8s_controller" {
     id      = 0
     model   = "virtio"
     bridge  = "vmbr0"
-    macaddr = var.controller_mac
+    macaddr = local.controller_mac
   }
 }
 
@@ -92,7 +106,7 @@ resource "proxmox_vm_qemu" "k8s_node_0" {
     id      = 0
     model   = "virtio"
     bridge  = "vmbr0"
-    macaddr = var.node_0_mac
+    macaddr = local.node_0_mac
   }
 
   provisioner "local-exec" {

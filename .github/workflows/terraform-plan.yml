@@ -1,14 +1,17 @@
 name: "Terraform Plan"
 
 on:
-  pull_request:
-    branches: main
+  workflow_call:
+    inputs:
+      environment:
+        type: string
+        description: The environment for which to run the plan
 
 env:
   TF_CLOUD_ORGANIZATION: "das-heist-apartment"
   TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
-  TF_WORKSPACE: "servah-host-workspace"
-  CONFIG_DIRECTORY: "./"
+  TF_WORKSPACE: "servah-host-${{ inputs.environment }}"
+  CONFIG_DIRECTORY: "./${{ inputs.environment }}/"
 
 jobs:
   terraform:
@@ -56,9 +59,9 @@ jobs:
               issue_number: context.issue.number,
             });
             const botComment = comments.find(comment => {
-              return comment.user.type === 'Bot' && comment.body.includes('Terraform Cloud Plan Output')
+              return comment.user.type === 'Bot' && comment.body.includes('Terraform Cloud Plan Output (${{ inputs.environment }})')
             });
-            const output = `#### Terraform Cloud Plan Output
+            const output = `#### Terraform Cloud Plan Output (${{ inputs.environment }})
               \`\`\`
               Plan: ${{ steps.plan-output.outputs.add }} to add, ${{ steps.plan-output.outputs.change }} to change, ${{ steps.plan-output.outputs.destroy }} to destroy.
               \`\`\`
