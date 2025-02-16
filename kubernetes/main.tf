@@ -3,7 +3,7 @@ terraform {
     organization = "das-heist-apartment"
 
     workspaces {
-      name = "servah-host-general"
+      name = "servah-host-kubernetes"
     }
   }
 
