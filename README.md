@@ -1,3 +1,4 @@
 # servah-terraform
 
-![Terraform Apply](https://github.com/DasHeistApartment/servah-terraform/actions/workflows/terraform-apply.yml/badge.svg)
+![General Workspace](https://github.com/DasHeistApartment/servah-terraform/actions/workflows/general.yml/badge.svg?event=push)
+![Kubernetes Workspace](https://github.com/DasHeistApartment/servah-terraform/actions/workflows/kubernetes.yml/badge.svg?event=push)
