@@ -7,8 +7,3 @@ variable "proxmox_token_secret" {
   type      = string
   sensitive = true
 }
-
-variable "argocd_github_app_secret" {
-  type      = string
-  sensitive = true
-}
