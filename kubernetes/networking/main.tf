@@ -21,7 +21,7 @@ resource "helm_release" "nginx_controller" {
   name             = "nginx-controller"
   repository       = "oci://ghcr.io/nginxinc/charts"
   chart            = "nginx-ingress"
-  version          = "0.17.1"
+  version          = "2.0.0"
   create_namespace = true
 
   set {
