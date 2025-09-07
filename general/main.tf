@@ -280,7 +280,13 @@ resource "null_resource" "setup_argocd_root_app" {
       EOF
       EOT
       ,
-      "sudo kubectl apply -f argocd_data/project.yaml -f argocd_data/app.yaml"
+      <<-EOT
+      cat <<EOF > argocd_data/config-maps.yaml
+      ${local.argocd_config_maps}
+      EOF
+      EOT
+      ,
+      "sudo kubectl apply -f argocd_data/project.yaml -f argocd_data/app.yaml -f argocd_data/config-maps.yaml"
     ]
   }
 
