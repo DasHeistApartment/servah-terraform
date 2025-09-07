@@ -39,7 +39,8 @@ variable "wwvote_connection_string" {
 }
 
 resource "random_password" "wwvote_webhook_token" {
-  length = 16
+  length  = 16
+  special = false
 }
 
 locals {
