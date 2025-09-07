@@ -30,8 +30,7 @@ locals {
       kube_version               = local.kube_version
       kube_network_plugin        = local.kube_network_plugin
       cluster_name               = "cluster.local"
-      enable_nodelocaldns        = false
-      podsecuritypolicy_enabled  = false
+      enable_nodelocaldns        = true
       persistent_volumes_enabled = false
     }
   )
