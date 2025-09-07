@@ -1,4 +1,6 @@
 locals {
-  node_0_mac     = "96:ca:03:e1:dc:12"
-  controller_mac = "c6:2e:50:01:72:04"
+  control_node_count  = 1
+  worker_node_count   = 1
+  kube_version        = "v1.33.4"
+  kube_network_plugin = "calico"
 }
