@@ -1,3 +1,6 @@
+// Remember to manually run an agent if the cluster is not up:
+// docker run --name tfc_agent_temp --env TFC_AGENT_TOKEN=%TOKEN% --env "KUBE_CONFIG_PATH=/home/tfc-agent/.kube/config" --mount type=bind,source="%userprofile%\.kube",target=/home/tfc-agent/.kube,readonly olfi01/custom-tfc-agent:latest
+
 terraform {
   cloud {
     organization = "das-heist-apartment"
@@ -62,6 +65,7 @@ resource "proxmox_vm_qemu" "k8s-control-node" {
   }
 
   network {
+    id     = 0
     model  = "virtio"
     bridge = "vmbr0"
   }
@@ -121,6 +125,7 @@ resource "proxmox_vm_qemu" "k8s-worker-node" {
   }
 
   network {
+    id     = 0
     model  = "virtio"
     bridge = "vmbr0"
   }
@@ -178,11 +183,12 @@ resource "proxmox_vm_qemu" "kubespray-host" {
   }
 
   network {
+    id     = 0
     model  = "virtio"
     bridge = "vmbr0"
   }
 
-  ipconfig0 = "ip=${cidrhost("192.168.21.0/24", 5 + count.index)}/23,gw=192.168.20.1"
+  ipconfig0 = "ip=${cidrhost("192.168.21.0/24", 5)}/23,gw=192.168.20.1"
 
   ciuser  = "ubuntu"
   sshkeys = <<EOF
