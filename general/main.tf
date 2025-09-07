@@ -39,6 +39,7 @@ resource "proxmox_vm_qemu" "k8s-control-node" {
   hotplug          = "network,disk,usb,memory,cpu"
   numa             = true
   automatic_reboot = true
+  bootdisk         = "virtio0"
 
   cores  = 2
   memory = 2048
@@ -99,6 +100,7 @@ resource "proxmox_vm_qemu" "k8s-worker-node" {
   hotplug          = "network,disk,usb,memory,cpu"
   numa             = true
   automatic_reboot = true
+  bootdisk         = "virtio0"
 
   cores  = 8
   memory = 32768
@@ -157,6 +159,7 @@ resource "proxmox_vm_qemu" "kubespray-host" {
   hotplug          = "network,disk,usb,memory,cpu"
   numa             = true
   automatic_reboot = true
+  bootdisk         = "virtio0"
 
   cores  = 2
   memory = 2048
