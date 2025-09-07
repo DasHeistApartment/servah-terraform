@@ -269,19 +269,19 @@ resource "null_resource" "setup_argocd_root_app" {
     inline = [
       "mkdir argocd_data",
       <<-EOT
-      cat <<EOF > argocd_data/project.yaml
+      cat <<'EOF' > argocd_data/project.yaml
       ${local.argocd_root_project_content}
       EOF
       EOT
       ,
       <<-EOT
-      cat <<EOF > argocd_data/app.yaml
+      cat <<'EOF' > argocd_data/app.yaml
       ${local.argocd_root_app_content}
       EOF
       EOT
       ,
       <<-EOT
-      cat <<EOF > argocd_data/config-maps.yaml
+      cat <<'EOF' > argocd_data/config-maps.yaml
       ${local.argocd_config_maps}
       EOF
       EOT
