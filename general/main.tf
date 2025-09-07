@@ -71,8 +71,8 @@ resource "proxmox_vm_qemu" "k8s-control-node" {
     bridge = "vmbr0"
   }
 
-  vga {
-    type = "serial0"
+  serial {
+    id = 0
   }
 
   ipconfig0 = "ip=${cidrhost("192.168.21.0/24", 10 + count.index)}/23,gw=192.168.20.1"
@@ -136,8 +136,8 @@ resource "proxmox_vm_qemu" "k8s-worker-node" {
     bridge = "vmbr0"
   }
 
-  vga {
-    type = "serial0"
+  serial {
+    id = 0
   }
 
   ipconfig0 = "ip=${cidrhost("192.168.21.0/24", 20 + count.index)}/23,gw=192.168.20.1"
@@ -199,8 +199,8 @@ resource "proxmox_vm_qemu" "kubespray-host" {
     bridge = "vmbr0"
   }
 
-  vga {
-    type = "serial0"
+  serial {
+    id = 0
   }
 
   ipconfig0 = "ip=${cidrhost("192.168.21.0/24", 5)}/23,gw=192.168.20.1"
