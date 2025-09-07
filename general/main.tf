@@ -281,18 +281,60 @@ resource "null_resource" "setup_argocd_root_app" {
       EOT
       ,
       <<-EOT
-      cat <<'EOF' > argocd_data/config-maps.yaml
-      ${local.argocd_config_maps}
-      EOF
-      EOT
-      ,
-      <<-EOT
       cat <<EOF > argocd_data/dex-secret.yaml
       ${local.argocd_dex_secret}
       EOF
       EOT
       ,
-      "sudo kubectl apply -n argocd -f argocd_data/project.yaml -f argocd_data/app.yaml -f argocd_data/dex-secret.yaml --server-side"
+      "sudo kubectl apply -n argocd -f argocd_data/project.yaml -f argocd_data/app.yaml -f argocd_data/dex-secret.yaml --server-side",
+      "rm -rf argocd_data"
+    ]
+  }
+
+  connection {
+    type        = "ssh"
+    user        = "ubuntu"
+    private_key = base64decode(var.ssh_private_key)
+    host        = proxmox_vm_qemu.k8s-control-node[0].ssh_host
+    port        = 22
+  }
+
+  triggers = {
+    always_run = timestamp()
+  }
+
+  depends_on = [
+    null_resource.setup_kubespray,
+    proxmox_vm_qemu.kubespray-host,
+    proxmox_vm_qemu.k8s-control-node,
+    proxmox_vm_qemu.k8s-worker-node
+  ]
+}
+
+resource "null_resource" "inject_kube_secrets" {
+  provisioner "remote-exec" {
+    inline = [
+      "mkdir secrets_data",
+      <<-EOT
+      cat <<'EOF' > secrets_data/arc-pat.yaml
+      ${local.arc_pat_secret_content}
+      EOF
+      EOT
+      ,
+      <<-EOT
+      cat <<'EOF' > secrets_data/tfc-agent.yaml
+      ${local.tfc_agent_secret_content}
+      EOF
+      EOT
+      ,
+      <<-EOT
+      cat <<'EOF' > secrets_data/wwdeatch.yaml
+      ${local.wwdeatch_secret_content}
+      EOF
+      EOT
+      ,
+      "sudo kubectl apply -f secrets_data/*.yaml --server-side",
+      "rm -rf secrets_data"
     ]
   }
 
