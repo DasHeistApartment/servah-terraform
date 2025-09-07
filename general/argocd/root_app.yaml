@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gitops-root
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: 
+    name: in-cluster
+  source:
+    directory:
+      recurse: true
+    path: root
+    repoURL: 'https://github.com/DasHeistApartment/servah-gitops'
+    targetRevision: HEAD
+  sources: []
+  project: gitops
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
