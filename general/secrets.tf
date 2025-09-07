@@ -10,5 +10,5 @@ variable "proxmox_token_secret" {
 
 variable "ssh_private_key" {
   type      = string
-  sensitive = true
+  sensitive = false // set to false to enable log from kubespray provisioner
 }

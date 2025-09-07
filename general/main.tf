@@ -1,5 +1,5 @@
 // Remember to manually run an agent if the cluster is not up:
-// docker run --name tfc_agent_temp --env TFC_AGENT_TOKEN=%TOKEN% --env "KUBE_CONFIG_PATH=/home/tfc-agent/.kube/config" --mount type=bind,source="%userprofile%\.kube",target=/home/tfc-agent/.kube,readonly olfi01/custom-tfc-agent:latest
+// podman run --rm --name tfc_agent_temp --env TFC_AGENT_TOKEN=%TOKEN% --env "KUBE_CONFIG_PATH=/home/tfc-agent/.kube/config" --mount type=bind,source="%userprofile%\.kube",target=/home/tfc-agent/.kube,readonly olfi01/custom-tfc-agent:latest
 
 terraform {
   cloud {
