@@ -27,7 +27,6 @@ locals {
   kubespray_k8s_config_content = templatefile(
     "${path.module}/kubespray/k8s-cluster.yaml",
     {
-      kube_version               = local.kube_version
       kube_network_plugin        = local.kube_network_plugin
       cluster_name               = "cluster.local"
       enable_nodelocaldns        = true
