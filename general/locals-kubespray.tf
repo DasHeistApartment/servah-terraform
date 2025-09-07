@@ -12,7 +12,7 @@ locals {
     "${path.module}/scripts/install_kubernetes.sh",
     {
       kubespray_data_dir = local.kubespray_data_dir,
-      kubespray_image    = "quay.io/kubespray/kubespray:v2.28.0"
+      kubespray_image    = "quay.io/kubespray/kubespray:v2.28.1"
     }
   )
 
@@ -40,7 +40,6 @@ locals {
       helm_enabled          = false
       ingress_nginx_enabled = true
       argocd_enabled        = true
-      argocd_version        = "3.1.4"
       metallb_ip_range      = "192.168.21.50-192.168.21.50"
     }
   )
