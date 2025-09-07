@@ -286,7 +286,13 @@ resource "null_resource" "setup_argocd_root_app" {
       EOF
       EOT
       ,
-      "sudo kubectl apply -f argocd_data/project.yaml -f argocd_data/app.yaml -f argocd_data/config-maps.yaml --server-side"
+      <<-EOT
+      cat <<EOF > argocd_data/dex-secret.yaml
+      ${local.argocd_dex_secret}
+      EOF
+      EOT
+      ,
+      "sudo kubectl apply -n argocd -f argocd_data/project.yaml -f argocd_data/app.yaml -f argocd_data/config-maps.yaml -f argocd_data/dex-secret.yaml --server-side"
     ]
   }
 
