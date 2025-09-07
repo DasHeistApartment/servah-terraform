@@ -41,8 +41,8 @@ resource "proxmox_vm_qemu" "k8s-control-node" {
   automatic_reboot = true
   bootdisk         = "virtio0"
 
-  cores  = 2
-  memory = 2048
+  cores  = 4
+  memory = 4096
 
   desc = "This VM is a control node for the kubernetes cluster, managed by Terraform."
 
