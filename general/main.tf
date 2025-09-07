@@ -263,3 +263,43 @@ resource "null_resource" "setup_kubespray" {
     proxmox_vm_qemu.k8s-worker-node
   ]
 }
+
+resource "null_resource" "setup_argocd_root_app" {
+  provisioner "remote-exec" {
+    inline = [
+      "mkdir argocd_data",
+      <<-EOT
+      cat <<EOF > argocd_data/project.yaml
+      ${local.argocd_root_project_content}
+      EOF
+      EOT
+      ,
+      <<-EOT
+      cat <<EOF > argocd_data/app.yaml
+      ${local.argocd_root_app_content}
+      EOF
+      EOT
+      ,
+      "sudo kubectl apply -f argocd_data/project.yaml -f argocd_data/app.yaml"
+    ]
+  }
+
+  connection {
+    type        = "ssh"
+    user        = "ubuntu"
+    private_key = base64decode(var.ssh_private_key)
+    host        = proxmox_vm_qemu.k8s-control-node[0].ssh_host
+    port        = 22
+  }
+
+  triggers = {
+    always_run = timestamp()
+  }
+
+  depends_on = [
+    null_resource.setup_kubespray,
+    proxmox_vm_qemu.kubespray-host,
+    proxmox_vm_qemu.k8s-control-node,
+    proxmox_vm_qemu.k8s-worker-node
+  ]
+}
