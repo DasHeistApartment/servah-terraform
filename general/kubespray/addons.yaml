@@ -171,7 +171,6 @@ metallb_config:
     - primary
 
 argocd_enabled: ${argocd_enabled}
-argocd_version: ${argocd_version}
 # argocd_namespace: argocd
 # Default password:
 #   - https://argo-cd.readthedocs.io/en/stable/getting_started/#4-login-using-the-cli
