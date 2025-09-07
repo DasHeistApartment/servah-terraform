@@ -57,7 +57,7 @@ locals {
     {
       bot_token         = var.wwvote_bot_token,
       webhook_token     = random_password.wwvote_webhook_token.result,
-      connection-string = var.wwvote_connection_string
+      connection_string = var.wwvote_connection_string
     }
   )
 }
