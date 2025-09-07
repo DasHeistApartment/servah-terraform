@@ -12,7 +12,7 @@ locals {
     "${path.module}/scripts/install_kubernetes.sh",
     {
       kubespray_data_dir = local.kubespray_data_dir,
-      kubespray_image    = "quay.io/kubespray/kubespray:v2.28.1"
+      kubespray_image    = "quay.io/kubespray/kubespray:v2.28.0"
     }
   )
 
