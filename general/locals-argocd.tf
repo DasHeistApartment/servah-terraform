@@ -6,4 +6,6 @@ locals {
       argocd_github_app_secret = var.argocd_github_app_secret
     }
   )
+
+  argocd_config_maps = file("${path.module}/argocd/config-maps.yaml")
 }
