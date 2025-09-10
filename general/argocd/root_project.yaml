@@ -10,4 +10,4 @@ spec:
   - namespace: '*'
     name: 'in-cluster'
   sourceRepos:
-  - '*'
+  - 'https://github.com/DasHeistApartment/servah-gitops'
