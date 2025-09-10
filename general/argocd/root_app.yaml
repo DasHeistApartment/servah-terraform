@@ -15,7 +15,7 @@ spec:
     repoURL: 'https://github.com/DasHeistApartment/servah-gitops'
     targetRevision: HEAD
   sources: []
-  project: gitops
+  project: default
   syncPolicy:
     automated:
       prune: true
