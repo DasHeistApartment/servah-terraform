@@ -1,7 +1,7 @@
 ---
 # Kubernetes dashboard
 # RBAC required. see docs/getting-started.md for access details.
-# dashboard_enabled: false
+dashboard_enabled: false
 
 # Helm deployment
 helm_enabled: ${helm_enabled}
@@ -140,7 +140,6 @@ cert_manager_trusted_internal_ca: |
   ClYrckfudCtSvSahJXotraigAf5wcqs=
   -----END CERTIFICATE-----
 # cert_manager_leader_election_namespace: kube-system
-
 # MetalLB deployment
 metallb_enabled: true
 metallb_speaker_enabled: true
