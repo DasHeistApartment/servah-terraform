@@ -50,7 +50,7 @@ resource "proxmox_vm_qemu" "k8s-control-node" {
     virtio {
       virtio0 {
         disk {
-          size     = "8G"
+          size     = "16G"
           storage  = "Kingston500GBNVMe1"
           iothread = true
         }
