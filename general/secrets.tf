@@ -48,6 +48,11 @@ resource "random_password" "dex_headlamp_client_secret" {
   special = false
 }
 
+variable "dex_db_password" {
+  type      = string
+  sensitive = true
+}
+
 locals {
   arc_pat_secret_content = templatefile("${path.module}/secrets/arc-pat.yaml",
     {
@@ -66,9 +71,10 @@ locals {
       connection_string = var.wwvote_connection_string
     }
   )
-  dex_client_secrets_content = templatefile("${path.module}/secrets/dex-client-secrets.yaml",
+  dex_secret_content = templatefile("${path.module}/secrets/dex.yaml",
     {
-      dex_headlamp_client_secret = random_password.dex_headlamp_client_secret.result
+      dex_headlamp_client_secret = random_password.dex_headlamp_client_secret.result,
+      db_password                = var.dex_db_password
     }
   )
 }
