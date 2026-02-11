@@ -68,7 +68,7 @@ locals {
   )
   dex_client_secrets_content = templatefile("${path.module}/secrets/dex-client-secrets.yaml",
     {
-      dex_headlamp_client_secret = random_password.dex_headlamp_client_secret
+      dex_headlamp_client_secret = random_password.dex_headlamp_client_secret.result
     }
   )
 }
