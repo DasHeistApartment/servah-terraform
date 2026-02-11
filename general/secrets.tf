@@ -43,6 +43,11 @@ resource "random_password" "wwvote_webhook_token" {
   special = false
 }
 
+resource "random_password" "dex_headlamp_client_secret" {
+  length  = 40
+  special = false
+}
+
 locals {
   arc_pat_secret_content = templatefile("${path.module}/secrets/arc-pat.yaml",
     {
@@ -59,6 +64,11 @@ locals {
       bot_token         = var.wwvote_bot_token,
       webhook_token     = random_password.wwvote_webhook_token.result,
       connection_string = var.wwvote_connection_string
+    }
+  )
+  dex_client_secrets_content = templatefile("${path.module}/secrets/dex-client-secrets.yaml",
+    {
+      dex_headlamp_client_secret = random_password.dex_headlamp_client_secret
     }
   )
 }
