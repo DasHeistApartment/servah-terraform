@@ -333,13 +333,7 @@ resource "null_resource" "inject_kube_secrets" {
       EOF
       EOT
       ,
-      <<-EOT
-      cat <<'EOF' > secrets_data/dex.yaml
-      ${local.dex_secret_content}
-      EOF
-      EOT
-      ,
-      "sudo kubectl apply -f secrets_data/arc-pat.yaml -f secrets_data/tfc-agent.yaml -f secrets_data/wwdeatch.yaml -f secrets_data/dex.yaml --server-side",
+      "sudo kubectl apply -f secrets_data/arc-pat.yaml -f secrets_data/tfc-agent.yaml -f secrets_data/wwdeatch.yaml --server-side",
       "rm -rf secrets_data"
     ]
   }
