@@ -38,12 +38,12 @@ local_volume_provisioner_enabled: true
 #   - kubernetes.io/hostname
 #   - topology.kubernetes.io/region
 #   - topology.kubernetes.io/zone
-# local_volume_provisioner_storage_classes:
-#   local-storage:
-#     host_dir: /mnt/disks
-#     mount_dir: /mnt/disks
-#     volume_mode: Filesystem
-#     fs_type: ext4
+local_volume_provisioner_storage_classes:
+  local-storage:
+    host_dir: /disks
+    mount_dir: /disks
+    volume_mode: Filesystem
+    fs_type: ext4
 #   fast-disks:
 #     host_dir: /mnt/fast-disks
 #     mount_dir: /mnt/fast-disks
