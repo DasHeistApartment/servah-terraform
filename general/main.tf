@@ -120,6 +120,13 @@ resource "proxmox_vm_qemu" "k8s-worker-node" {
           iothread = true
         }
       }
+      virtio1 {
+        disk {
+          size = "32G"
+          storage = "Kingston500GBNVMe1"
+          iothread = true
+        }
+      }
     }
     ide {
       ide0 {
